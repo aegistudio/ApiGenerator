@@ -1,0 +1,51 @@
+<!-- We use this xml because it is the initiative use for this API Generator. -->
+<api namespace="net.aegistudio.vst" clientHost="VstClient" serverHost="VstServer">
+	<value name="MidiEvent">
+		<field name="deltaFrame" type="int"/>
+		<field name="data" type="byte" variant="true"/>
+	</value>
+
+	<interface name="Parameter">
+		<method name="getValue">
+			<return type="float"/>
+		</method>
+		<method name="setValue">
+			<parameter name="value" type="float"/>
+		</method>
+		<method name="getLabel">
+			<return type="string"/>
+		</method>
+		<method name="getName">
+			<return type="string"/>
+		</method>
+		<method name="getDisplay">
+			<return type="string"/>
+		</method>
+	</interface>
+
+	<value name="Frame">
+		<field name="data" type="double" variant="true"/>
+	</value>
+
+	<interface name="Plugin">
+		<method name="listParameters">
+			<return type="Parameter" variant="true"/>
+		</method>
+		<method name="process">
+			<parameter name="input" type="Frame" variant="true"/>
+			<return type="Frame" variant="true"/>
+		</method>
+		<method name="trigger">
+			<parameter name="midi" type="MidiEvent"/>
+		</method>
+	</interface>
+	
+	<function name="init">
+		<parameter name="dllPath" type="string"/>
+		<return type="Plugin"/>
+	</function>
+
+	<function name="destroy">
+		<parameter name="vstHandle" type="Plugin"/>
+	</function>
+</api>

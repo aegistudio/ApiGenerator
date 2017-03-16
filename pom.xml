@@ -1,0 +1,65 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+     
+	<groupId>net.aegistudio.api</groupId>
+	<artifactId>api-generator</artifactId>
+	<version>1.0</version>
+	<packaging>pom</packaging>
+
+	<distributionManagement>
+		<repository>
+			<id>nexus.aegistudio.net</id>
+			<url>http://nexus.aegistudio.net/repository/release/</url>
+		</repository>
+		<snapshotRepository>
+			<id>nexus.aegistudio.net</id>
+			<url>http://nexus.aegistudio.net/repository/snapshot/</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<name>API Generator</name>
+	<url>http://github.com/aegistudio/ApiGenerator</url>
+	<description>Code generation as cross platform programming interface.</description>
+	<modules>
+		<module>api-common</module>
+		<module>api-xmldom</module>
+	</modules>
+
+	<dependencyManagement><dependencies>
+		<dependency>
+			<groupId>net.aegistudio.api</groupId>
+			<artifactId>api-common</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies></dependencyManagement>
+	
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.0</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+  
+	<build>
+		<sourceDirectory>main/java</sourceDirectory>
+		<testSourceDirectory>test/java</testSourceDirectory>
+		<resources><resource><directory>
+			main/resources
+		</directory></resource></resources>
+		<testResources><testResource><directory>
+			test/resources
+		</directory></testResource></testResources>
+		
+		<plugins><plugin>
+			<artifactId>maven-compiler-plugin</artifactId>
+			<configuration>
+				<source>1.8</source>
+				<target>1.8</target>
+			</configuration>
+		</plugin></plugins>
+	</build>
+</project>
