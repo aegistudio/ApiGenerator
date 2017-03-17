@@ -24,6 +24,7 @@
 	<modules>
 		<module>api-common</module>
 		<module>api-xmldom</module>
+		<module>api-javagen</module>
 	</modules>
 
 	<dependencyManagement><dependencies>
