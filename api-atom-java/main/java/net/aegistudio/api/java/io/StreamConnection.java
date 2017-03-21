@@ -3,7 +3,6 @@ package net.aegistudio.api.java.io;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import net.aegistudio.api.java.Connection;
 import net.aegistudio.api.java.packet.Packet;
@@ -34,7 +33,7 @@ public class StreamConnection implements Connection {
 		this.writer.close();
 	}
 	
-	public static Function<Consumer<Packet>, StreamConnection> setup(
+	public static Connection.Factory setup(
 			InputStream inputStream, OutputStream outputStream) {
 		return packet -> 
 			new StreamConnection(inputStream, outputStream, packet);

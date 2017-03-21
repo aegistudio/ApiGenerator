@@ -33,6 +33,7 @@ public class WriterThread extends Thread {
 				Packet packet = senderQueue.remove();
 				try {
 					protocol.transfer(out, packet);
+					out.flush();
 				}
 				catch (Exception e) {
 					if(open && packet instanceof PacketCall) {

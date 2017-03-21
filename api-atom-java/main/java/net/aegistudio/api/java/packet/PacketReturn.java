@@ -40,8 +40,8 @@ public class PacketReturn implements Packet {
 
 	@Override
 	public void write(DataOutputStream output) throws IOException {
-		output.write(caller);
-		output.write(result.length);
+		output.writeInt(caller);
+		output.writeInt(result.length);
 		ApiBytes.write(output, result);
 	}
 

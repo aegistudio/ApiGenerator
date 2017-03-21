@@ -16,15 +16,13 @@ public class BlockingQueue<T> {
 	
 	public synchronized T remove() 
 			throws InterruptedException {
+		
 		if(queue.isEmpty()) this.wait();
 		return queue.remove();
 	}
 	
 	public synchronized void add(T t) {
-		synchronized(queue) {
-			boolean shouldNotify = queue.isEmpty();
-			queue.add(t);
-			if(shouldNotify) this.notify();
-		}
+		queue.add(t);
+		notify();
 	}
 }
