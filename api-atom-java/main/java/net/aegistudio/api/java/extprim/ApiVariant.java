@@ -55,7 +55,7 @@ public class ApiVariant {
 	
 	public static double[] readDouble(DataInputStream dataInputStream) throws IOException {
 		return arrayRead(dataInputStream, double[]::new, 
-				(in, a, i) -> a[i] = ApiFloat.readFloat(in));
+				(in, a, i) -> a[i] = ApiFloat.readDouble(in));
 	}
 	
 	public interface WriteGenericInterface<E> {
@@ -85,7 +85,7 @@ public class ApiVariant {
 				(out, a, i) -> ApiFloat.writeFloat(dataOutputStream, a[i]));
 	}
 	
-	public static void writeFloat(DataOutputStream dataOutputStream, 
+	public static void writeInt(DataOutputStream dataOutputStream, 
 			int[] data) throws IOException {
 		arrayWrite(dataOutputStream, data, data.length,
 				(out, a, i) -> dataOutputStream.writeInt(a[i]));
