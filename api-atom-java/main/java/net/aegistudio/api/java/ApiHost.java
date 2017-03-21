@@ -1,5 +1,8 @@
 package net.aegistudio.api.java;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -12,13 +15,15 @@ import net.aegistudio.api.java.packet.PacketException;
 import net.aegistudio.api.java.packet.PacketReturn;
 import net.aegistudio.api.java.packet.PacketServerHello;
 
-public abstract class ApiHost {
+public abstract class ApiHost extends ApiInterface {
 	protected final Map<Integer, ApiObject> registries = new WeakHashMap<>();
 	protected final Map<ApiObject, Integer> reverseRegistries = new WeakHashMap<>();
 	
 	protected final Connection connection;
 	public ApiHost(Connection.Factory factory) {
 		connection = factory.open(this::handle);
+		registries.put(0, this);
+		reverseRegistries.put(this, 0);
 	}
 	
 	private Map<Class<? extends Packet>, Consumer<Packet>> 
@@ -44,18 +49,13 @@ public abstract class ApiHost {
 	protected void handlePacketCall(PacketCall packetCall) {
 		Packet resultPacket = null;
 		try {
-			byte[] callResult;
-			if(packetCall.callee == 0) 
-				callResult = handleFunctionCall(
+			ApiObject object = retrive(packetCall.callee);
+			if(!(object instanceof ApiInterface))
+				throw new ApiException("Not a callable ApiObject.");
+			ApiInterface interfac = (ApiInterface)object;
+			byte[] callResult = interfac.response(
 						packetCall.call, packetCall.parameter);
-			else {
-				ApiObject object = retrive(packetCall.callee);
-				if(!(object instanceof ApiInterface))
-					throw new ApiException("Not a callable ApiObject.");
-				ApiInterface interfac = (ApiInterface)object;
-				callResult = interfac.response(
-							packetCall.call, packetCall.parameter);
-			}
+			
 
 			PacketReturn packetReturn = new PacketReturn();
 			packetReturn.caller = packetCall.caller;
@@ -69,11 +69,6 @@ public abstract class ApiHost {
 			resultPacket = packetException;
 		}
 		connection.send(resultPacket);
-	}
-	
-	protected byte[] handleFunctionCall(int functionCall, 
-			byte[] parameter) throws ApiException {
-		throw new ApiException("No supported function call.");
 	}
 	
 	private void retriveTransaction(int callerId, 
@@ -142,25 +137,56 @@ public abstract class ApiHost {
 		registries.remove(objectId);
 	}
 	
-	public interface ResponderBlock<T> {
-		public T respond(byte[] response) throws Exception;
+	public interface RequesterBlock {
+		public void request(DataOutputStream dataOutputStream) throws Exception;
 	}
 	
-	public <T> T call(int callee, int call, byte[] request, 
+	public interface ResponderBlock<T> {
+		public T respond(DataInputStream dataInputStream) throws Exception;
+	}
+	
+	public <T> T call(int callee, int call, 
 			ResponderBlock<T> responder) throws ApiException {
-		Transaction<T> transaction = new Transaction<>(responder);
-		
-		PacketCall packet = new PacketCall();
-		packet.caller = marshal(transaction);
-		packet.callee = callee;
-		packet.call = call;
-		packet.parameter = request;
-		
-		connection.send(packet);
-		T result = transaction.call();
-		demarshal(transaction);
-		
-		return result;
+		return call(callee, call, i-> {}, responder);
+	}
+	
+	public void call(int callee, int call, RequesterBlock request)
+			throws ApiException {
+		call(callee, call, request, (result) -> null);
+	}
+	
+	public void call(int callee, int call) throws ApiException {
+		call(callee, call, i -> {}, (result) -> null);
+	}
+	
+	public <T> T call(int callee, int call, RequesterBlock request, 
+			ResponderBlock<T> responder) throws ApiException {
+		try {
+			ByteArrayOutputStream byteArrayOutput = new ByteArrayOutputStream();
+			DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutput);
+			
+			request.request(dataOutputStream);
+			
+			byte[] parameter = byteArrayOutput.toByteArray();
+			Transaction<T> transaction = new Transaction<>(responder);
+			
+			PacketCall packet = new PacketCall();
+			packet.caller = marshal(transaction);
+			packet.callee = callee;
+			packet.call = call;
+			packet.parameter = parameter;
+			
+			connection.send(packet);
+			T result = transaction.call();
+			demarshal(transaction);
+			
+			return result;
+		}
+		catch(Exception e) {
+			if(e instanceof ApiException)
+				throw (ApiException)e;
+			else throw new ApiException(e);
+		}
 	}
 	
 	public void close() {

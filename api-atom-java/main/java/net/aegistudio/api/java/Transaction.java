@@ -1,5 +1,8 @@
 package net.aegistudio.api.java;
 
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+
 import net.aegistudio.api.java.ApiHost.ResponderBlock;
 
 public class Transaction<T> extends ApiObject {
@@ -14,7 +17,8 @@ public class Transaction<T> extends ApiObject {
 		try {
 			if(resultBlock == null) this.wait();
 			if(encounter != null) throw encounter;
-			return block.respond(resultBlock);
+			return block.respond(new DataInputStream(
+					new ByteArrayInputStream(resultBlock)));
 		}
 		catch(Exception e) {
 			throw new ApiException(e);

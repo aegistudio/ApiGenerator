@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public abstract class ApiObject {
+	// Used when the children would like to serialize empty parameter list or return void.
 	public Set<WeakReference<ApiHost>> responder = new HashSet<>();
 	
 	public void register(ApiHost connection) {

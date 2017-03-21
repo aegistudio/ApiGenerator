@@ -2,15 +2,23 @@ package net.aegistudio.api.java;
 
 import static org.junit.Assert.*;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+
 import org.junit.Test;
+
+import net.aegistudio.api.java.extprim.ApiString;
 
 public class TestTransaction {
 	public @Test void testBlockFeed() throws ApiException {
-		Transaction<String> transaction = new Transaction<>(String::new);
+		Transaction<String> transaction = new Transaction<>(ApiString::read);
 		new Thread(() -> {
 			try {
+				ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
+				DataOutputStream dataOutputStream = new DataOutputStream(byteOutputStream);
+				ApiString.write(dataOutputStream, "TestBlockFeed");
 				Thread.sleep((long)(Math.random() * 10l));
-				transaction.supply("TestBlockFeed".getBytes());
+				transaction.supply(byteOutputStream.toByteArray());
 			}
 			catch(Exception e) {
 				transaction.encounter(e);
@@ -21,7 +29,7 @@ public class TestTransaction {
 	}
 	
 	public @Test void testExceptionFeed() throws ApiException {
-		Transaction<String> transaction = new Transaction<>(String::new);
+		Transaction<String> transaction = new Transaction<>(ApiString::read);
 		new Thread(() -> {
 			try {
 				Thread.sleep((long)(Math.random() * 10l));
