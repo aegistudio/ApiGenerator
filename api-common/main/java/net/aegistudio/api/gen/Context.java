@@ -17,4 +17,7 @@ public interface Context {
 	 */
 	public OutputStream file(String path) 
 			throws IOException;
+	
+	public Context step(String path)
+			throws IOException;
 }

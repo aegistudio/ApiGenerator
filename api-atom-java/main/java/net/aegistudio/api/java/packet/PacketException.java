@@ -42,7 +42,7 @@ public class PacketException implements Packet {
 	@Override
 	public void write(DataOutputStream output) throws IOException {
 		output.writeInt(caller);
-		ApiString.write(output, exception.getMessage());
+		ApiString.write(exception.getMessage(), output);
 	}
 
 	@Override

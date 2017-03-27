@@ -19,7 +19,7 @@ import net.aegistudio.api.Value;
 
 public class SymbolTable {
 	public enum Class {
-		UNDEFINED, VALUE, HANDLE;
+		UNDEFINED, VALUE, INTERFACE, CALLBACK;
 	}
 	
 	protected final Map<String, Class> table = new TreeMap<>();
@@ -28,9 +28,9 @@ public class SymbolTable {
 		for(Value value : document.values()) 
 			table.put(value.name(), Class.VALUE);
 		for(Interface interfac : document.interfaces())
-			table.put(interfac.name(), Class.HANDLE);
+			table.put(interfac.name(), Class.INTERFACE);
 		for(Interface callback : document.callbacks())
-			table.put(callback.name(), Class.HANDLE);
+			table.put(callback.name(), Class.CALLBACK);
 	}
 	
 	public Class lookup(Type type) {

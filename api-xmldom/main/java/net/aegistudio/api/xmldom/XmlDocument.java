@@ -6,6 +6,7 @@ import java.util.List;
 import net.aegistudio.api.Document;
 import net.aegistudio.api.Interface;
 import net.aegistudio.api.Method;
+import net.aegistudio.api.Namespace;
 import net.aegistudio.api.Value;
 
 public class XmlDocument implements Document {
@@ -44,12 +45,9 @@ public class XmlDocument implements Document {
 	}
 	
 	@Override
-	public String[] namespace() {
-		String namespace = dom.getDocumentElement()
-				.getAttribute("namespace");
-		
-		if(namespace.length() == 0) return new String[0];
-		return namespace.split("[.]");
+	public Namespace namespace() {
+		return new Namespace(dom.getDocumentElement()
+				.getAttribute("namespace"));
 	}
 
 	@Override

@@ -21,8 +21,8 @@ public class TestVstDom extends XmlDomTest {
 	
 	// Root node properties.
 	public @Test void testRoot() {
-		assertEquals(xmlDom.namespace(), new String[]{
-				"net", "aegistudio", "vst"});
+		assertEquals(xmlDom.namespace().concatenate("."), 
+				"net.aegistudio.vst");
 		assertEquals(xmlDom.clientHost(), "VstClient");
 		assertEquals(xmlDom.serverHost(), "VstServer");
 	}

@@ -19,29 +19,17 @@ class TestApiClient extends ApiHost {
 	}
 	
 	public int functionCall1() throws ApiException {
-		return call(0, 0, dataInputStream -> {
-			int resultValue = 0;
-			resultValue = dataInputStream.readInt(); 
-			return resultValue;
-		});
+		return call(0, 0, DataInputStream::readInt);
 	}
 	
 	public float functionCall2() throws ApiException {
-		return call(0, 1, dataInputStream -> {
-			float resultValue = 0;
-			resultValue = ApiFloat.readFloat(dataInputStream);
-			return resultValue;
-		});
+		return call(0, 1, ApiFloat::readFloat);
 	}
 	
 	public float arraySum(float[] floatArray) throws ApiException {
 		return call(0, 2, dataOutputStream -> {
 			ApiVariant.writeFloat(dataOutputStream, floatArray);
-		}, dataInputStream -> {
-			float resultValue = 0;
-			resultValue = ApiFloat.readFloat(dataInputStream);
-			return resultValue;
-		});
+		}, ApiFloat::readFloat);
 	}
 
 	@Override
@@ -77,7 +65,7 @@ class TestApiServer extends ApiHost {
 	}
 	
 	private void invokeFunctionCall3(DataInputStream dataInput,
-			DataOutputStream dataOutput) throws IOException {
+			DataOutputStream dataOutput) throws IOException, ApiException {
 		float[] input = ApiVariant.readFloat(dataInput);
 		ApiFloat.writeFloat(dataOutput, arraySum(input));
 	}

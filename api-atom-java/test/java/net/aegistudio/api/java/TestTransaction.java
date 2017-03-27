@@ -16,7 +16,7 @@ public class TestTransaction {
 			try {
 				ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
 				DataOutputStream dataOutputStream = new DataOutputStream(byteOutputStream);
-				ApiString.write(dataOutputStream, "TestBlockFeed");
+				ApiString.write("TestBlockFeed", dataOutputStream);
 				Thread.sleep((long)(Math.random() * 10l));
 				transaction.supply(byteOutputStream.toByteArray());
 			}

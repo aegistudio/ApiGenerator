@@ -4,8 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import net.aegistudio.api.java.extprim.ApiString;
-import net.aegistudio.api.java.extprim.ApiVariant;
+//import net.aegistudio.api.java.extprim.ApiVariant;
 
 /**
  * <p>Transfer the call table as connect response.
@@ -28,16 +27,16 @@ import net.aegistudio.api.java.extprim.ApiVariant;
  */
 
 public class PacketServerHello implements Packet {
-	public String[] entries;
+	//public String[] entries;
 	
 	@Override
 	public void read(DataInputStream input) throws IOException {
-		entries = ApiVariant.read(input, String[]::new, ApiString::read);
+		//entries = ApiVariant.readString(input);
 	}
 
 	@Override
 	public void write(DataOutputStream output) throws IOException {
-		ApiVariant.write(output, entries, ApiString::write);
+		//ApiVariant.writeString(output, entries);
 	}
 
 	@Override

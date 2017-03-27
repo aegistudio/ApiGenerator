@@ -4,8 +4,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 
-public abstract class ApiInterface extends ApiObject {
+public abstract class ApiLocal extends ApiObject {
 	public interface Facade {
 		public void invoke(DataInputStream inputStream, 
 				DataOutputStream outputStream) throws Exception;
@@ -34,5 +35,15 @@ public abstract class ApiInterface extends ApiObject {
 		catch(Exception e) {
 			throw new ApiException(e);
 		}
+	}
+	
+	protected static <T extends ApiLocal> T read(DataInputStream dataInputStream, 
+			ApiHost apiHost, Class<T> concrete) throws ApiException, IOException {
+		return concrete.cast(apiHost.retrive(dataInputStream.readInt()));
+	}
+	
+	public void write(DataOutputStream dataOutputStream, ApiHost apiHost) 
+			throws IOException, ApiException {
+		dataOutputStream.writeInt(apiHost.marshal(this));
 	}
 }

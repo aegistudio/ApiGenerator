@@ -20,15 +20,28 @@ public class FileContext implements Context {
 		this(".");
 	}
 	
-	@Override
-	public OutputStream file(String path) throws IOException {
+	private File into(String path, boolean lastFolder) throws IOException {
 		String[] fullPath = path.split("[/]");
 		File current = root;
 		for(int i = 0; i < fullPath.length; i ++) {
 			if(!current.exists()) current.mkdir();
 			current = new File(current, fullPath[i]);
 		}
-		current.createNewFile();
-		return new FileOutputStream(current);
+		
+		if(!current.exists()) {
+			if(lastFolder) current.mkdir(); 
+			else current.createNewFile();
+		}
+		return current;
+	}
+	
+	@Override
+	public OutputStream file(String path) throws IOException {
+		return new FileOutputStream(into(path, false));
+	}
+
+	@Override
+	public Context step(String path) throws IOException {
+		return new FileContext(into(path, true));
 	}
 }

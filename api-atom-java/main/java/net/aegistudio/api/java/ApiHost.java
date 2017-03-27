@@ -15,7 +15,7 @@ import net.aegistudio.api.java.packet.PacketException;
 import net.aegistudio.api.java.packet.PacketReturn;
 import net.aegistudio.api.java.packet.PacketServerHello;
 
-public abstract class ApiHost extends ApiInterface {
+public abstract class ApiHost extends ApiLocal {
 	protected final Map<Integer, ApiObject> registries = new WeakHashMap<>();
 	protected final Map<ApiObject, Integer> reverseRegistries = new WeakHashMap<>();
 	
@@ -50,9 +50,9 @@ public abstract class ApiHost extends ApiInterface {
 		Packet resultPacket = null;
 		try {
 			ApiObject object = retrive(packetCall.callee);
-			if(!(object instanceof ApiInterface))
+			if(!(object instanceof ApiLocal))
 				throw new ApiException("Not a callable ApiObject.");
-			ApiInterface interfac = (ApiInterface)object;
+			ApiLocal interfac = (ApiLocal)object;
 			byte[] callResult = interfac.response(
 						packetCall.call, packetCall.parameter);
 			

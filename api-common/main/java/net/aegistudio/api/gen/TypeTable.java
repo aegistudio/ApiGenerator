@@ -2,7 +2,7 @@ package net.aegistudio.api.gen;
 
 import java.util.function.Function;
 
-import net.aegistudio.api.Document;
+import net.aegistudio.api.Namespace;
 import net.aegistudio.api.Primitive;
 import net.aegistudio.api.Type;
 
@@ -30,29 +30,37 @@ public class TypeTable {
 	}
 	
 	public class Result {
-		public final String name;
+		protected final String rawName;
+		protected final Function<String, String> predict;
 		public final Primitive primitive;
 		public final boolean variant;
 		
 		public Result(String rawName, boolean variant) {
 			this.primitive = null;
 			this.variant = variant;
-			Function<String, String> predict = 
-					variant? variance : invariance;
-			this.name = predict.apply(rawName);
+			this.predict = variant? 
+					variance : invariance;
+			this.rawName = rawName;
 		}
 		
 		public Result(Primitive primitive, boolean variant) {
 			this(primitiveTypes[primitive.ordinal()], variant);
 		}
+		
+		public String name(Namespace namespace) {
+			String typeName;
+			if(primitive != null) typeName = rawName;
+			else typeName = namespace.concatenate(
+					rawName, commonSeparator);
+			return predict.apply(typeName);
+		}
 	}
 	
-	public Result convertType(Document document, Type type) {
+	public Result convertType(Type type) {
 		if(type == null) return new Result(voidType, false);
 		boolean variant = type.variant();
 		Primitive assume = Primitive.parse(type.name()); 
 		if(assume != null) return new Result(assume, variant);
-		return new Result(Document.concatenate(document.namespace(), 
-				type.name(), commonSeparator), variant);
+		return new Result(type.name(), variant);
 	}
 }
