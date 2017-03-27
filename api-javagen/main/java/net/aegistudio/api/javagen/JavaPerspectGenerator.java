@@ -32,7 +32,7 @@ public abstract class JavaPerspectGenerator<Perspect> implements Generator {
 			
 			construct(perspect, symbolTable, dom.namespace(), print);
 			
-			print.close();
+			output.close();
 		}
 	}
 	

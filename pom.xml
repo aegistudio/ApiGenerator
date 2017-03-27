@@ -17,7 +17,7 @@
 			<url>http://nexus.aegistudio.net/repository/snapshot/</url>
 		</snapshotRepository>
 	</distributionManagement>
-
+	
 	<name>API Generator</name>
 	<url>http://github.com/aegistudio/ApiGenerator</url>
 	<description>Code generation as cross platform programming interface.</description>
@@ -56,12 +56,36 @@
 			test/resources
 		</directory></testResource></testResources>
 		
-		<plugins><plugin>
-			<artifactId>maven-compiler-plugin</artifactId>
-			<configuration>
-				<source>1.8</source>
-				<target>1.8</target>
-			</configuration>
-		</plugin></plugins>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.8</version>
+				<executions>
+					<execution>
+						<id>vstdom-testrc-copy</id>
+						<goals><goal>run</goal></goals>
+						<phase>generate-test-resources</phase>
+						<configuration>
+							<tasks>
+								<property name="vstdom.path" value="${project.basedir}/../vst.xml.source"/>
+								<property name="testrc.dir" value="${project.basedir}/test/resources"/>
+								<property name="vstdom.dest" value="${testrc.dir}/vst.xml"/>
+								<echo message="Would copy vst.xml to path: ${vstdom.dest}"/>
+								<echo message="Would search vst.xml in path: ${vstdom.path}"/>
+								<echo message="Please wait when copying vst.xml to concrete test resources directory..."/>
+								<copy file="${vstdom.path}" tofile="${vstdom.dest}" failonerror="false"/>
+							</tasks>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
 	</build>
 </project>
