@@ -1,7 +1,14 @@
 package net.aegistudio.api.xmldom;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
 
 import net.aegistudio.api.Document;
 import net.aegistudio.api.Interface;
@@ -15,6 +22,12 @@ public class XmlDocument implements Document {
 	protected final Interface[] interfaces, callbacks;
 	protected final Value[] values;
 	protected final Method[] functions;
+	
+	public static XmlDocument read(InputStream domInputStream) 
+			throws IOException, SAXException, ParserConfigurationException {
+		return new XmlDocument(DocumentBuilderFactory.newInstance()
+				.newDocumentBuilder().parse(domInputStream));
+	}
 	
 	public XmlDocument(org.w3c.dom.Document dom) {
 		this.dom = dom;

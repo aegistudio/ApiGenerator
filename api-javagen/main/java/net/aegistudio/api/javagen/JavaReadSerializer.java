@@ -20,9 +20,7 @@ public class JavaReadSerializer extends ComposeSerializer {
 		// Value or handle objects.
 		compositeFilter(Filter.VALUE, "<type>");
 		compositeFilter(Filter.INTERFACE, "<type>");
-		
-		// Callback object.
-		
+		compositeFilter(Filter.CALLBACK, "<type>");
 	}
 	
 	private void compositeFilter(Filter filter, String object) {

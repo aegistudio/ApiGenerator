@@ -11,12 +11,12 @@ import org.xml.sax.SAXException;
 
 import net.aegistudio.api.xmldom.XmlDocument;
 
-public class TestVstDom extends XmlDomTest {
+public class TestVstDom {
 	protected final XmlDocument xmlDom;
 	public TestVstDom() throws IOException, 
 		SAXException, ParserConfigurationException {
-		super("vst.xml");
-		xmlDom = new XmlDocument(super.document);
+		xmlDom = XmlDocument.read(getClass()
+				.getResourceAsStream("/vst.xml"));
 	}
 	
 	// Root node properties.
