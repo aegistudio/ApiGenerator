@@ -55,8 +55,9 @@ public abstract class JavaLocalGenerator extends JavaPerspectGenerator<Interfaci
 				.replace("<parent>", perspect.host()? "ApiHost" : "ApiLocal"));
 		localPrint.push();
 		
-		// Super class constructor or deserializer.
+		// Generate host or local object.
 		if(perspect.host()) {
+			// Super class constructor
 			localPrint.println("public <type>(Connection.Factory factory) {"
 					.replace("<type>", perspect.name()));
 			localPrint.push();
@@ -65,12 +66,24 @@ public abstract class JavaLocalGenerator extends JavaPerspectGenerator<Interfaci
 			localPrint.println("}");
 		}
 		else {
+			// Deserializer.
 			localPrint.println(("public static <type> read(DataInputStream dataInputStream, "
 					+ "ApiHost apiHost) throws IOException, ApiException {")
 					.replace("<type>", perspect.name()));
 			localPrint.push();
 			localPrint.println("return ApiLocal.read(dataInputStream, apiHost, <type>.class);"
 					.replace("<type>", perspect.name()));
+			localPrint.pop();
+			localPrint.println("}");
+			localPrint.println();
+			
+			// Serializer.
+			localPrint.println(("public static void write(<type> value, "
+					+ "DataOutputStream dataOutputStream, "
+					+ "ApiHost apiHost) throws IOException, ApiException {")
+					.replace("<type>", perspect.name()));
+			localPrint.push();
+			localPrint.println("ApiLocal.write(value, dataOutputStream, apiHost);");
 			localPrint.pop();
 			localPrint.println("}");
 		}

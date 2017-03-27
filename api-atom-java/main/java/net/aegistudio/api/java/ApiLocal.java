@@ -42,8 +42,10 @@ public abstract class ApiLocal extends ApiObject {
 		return concrete.cast(apiHost.retrive(dataInputStream.readInt()));
 	}
 	
-	public void write(DataOutputStream dataOutputStream, ApiHost apiHost) 
-			throws IOException, ApiException {
-		dataOutputStream.writeInt(apiHost.marshal(this));
+	protected static void write(ApiLocal local, DataOutputStream dataOutputStream, 
+			ApiHost apiHost) throws ApiException, IOException {
+		if(local != null) 
+			dataOutputStream.writeInt(apiHost.marshal(local));
+		else dataOutputStream.writeInt(0);
 	}
 }

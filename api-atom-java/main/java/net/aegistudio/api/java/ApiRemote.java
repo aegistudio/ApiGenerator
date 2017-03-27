@@ -27,12 +27,15 @@ public class ApiRemote extends ApiObject {
 	
 	protected static <T extends ApiRemote> T read(
 			DataInputStream dataInputStream, ApiHost apiHost, 
-			BiFunction<ApiHost, Integer, T> factory) throws IOException, ApiException {
-		return factory.apply(apiHost, dataInputStream.readInt());
+			BiFunction<ApiHost, Integer, T> factory) 
+					throws IOException, ApiException {
+		int result = dataInputStream.readInt();
+		return result == 0? null : factory.apply(apiHost, result);
 	}
 	
-	public void write(DataOutputStream dataOutputStream, 
-			ApiHost apiHost) throws IOException, ApiException {
-		dataOutputStream.writeInt(handle);
+	protected static void write(ApiRemote remote, 
+			DataOutputStream dataOutputStream, ApiHost apiHost) 
+					throws IOException, ApiException {
+		dataOutputStream.writeInt(remote != null? remote.handle : 0);
 	}
 }
