@@ -53,7 +53,7 @@ public abstract class ApiHost extends ApiLocal {
 			if(!(object instanceof ApiLocal))
 				throw new ApiException("Not a callable ApiObject.");
 			ApiLocal interfac = (ApiLocal)object;
-			byte[] callResult = interfac.response(
+			byte[] callResult = interfac.response(this,
 						packetCall.call, packetCall.parameter);
 			
 

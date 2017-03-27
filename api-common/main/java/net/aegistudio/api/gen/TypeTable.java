@@ -35,29 +35,48 @@ public class TypeTable {
 		public final Primitive primitive;
 		public final boolean variant;
 		
-		public Result(String rawName, boolean variant) {
-			this.primitive = null;
+		private Result(Primitive primitive, String rawName, boolean variant) {
+			this.primitive = primitive;
 			this.variant = variant;
 			this.predict = variant? 
 					variance : invariance;
 			this.rawName = rawName;
 		}
 		
-		public Result(Primitive primitive, boolean variant) {
-			this(primitiveTypes[primitive.ordinal()], variant);
+		public Result(String rawName, boolean variant) {
+			this(null, rawName, variant);
 		}
 		
-		public String name(Namespace namespace) {
+		public Result(Primitive primitive, boolean variant) {
+			this(primitive, primitiveTypes[primitive.ordinal()], variant);
+		}
+		
+		public String component(Namespace namespace) {
 			String typeName;
 			if(primitive != null) typeName = rawName;
 			else typeName = namespace.concatenate(
 					rawName, commonSeparator);
-			return predict.apply(typeName);
+			return typeName;
+		}
+		
+		public String name(Namespace namespace) {
+			return predict.apply(component(namespace));
+		}
+	}
+	
+	public class VoidResult extends Result {
+
+		public VoidResult() {
+			super(voidType, false);
+		}
+		
+		public String component(Namespace namespace) {
+			return rawName;
 		}
 	}
 	
 	public Result convertType(Type type) {
-		if(type == null) return new Result(voidType, false);
+		if(type == null) return new VoidResult();
 		boolean variant = type.variant();
 		Primitive assume = Primitive.parse(type.name()); 
 		if(assume != null) return new Result(assume, variant);

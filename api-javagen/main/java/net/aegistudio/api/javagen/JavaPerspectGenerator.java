@@ -27,7 +27,7 @@ public abstract class JavaPerspectGenerator<Perspect> implements Generator {
 		SymbolTable symbolTable = new SymbolTable(dom);
 		
 		for(Perspect perspect : perspect(dom)) {
-			OutputStream output = namespaceFolder.file(name(perspect));
+			OutputStream output = namespaceFolder.file(name(perspect) + ".java");
 			IndentPrintStream print = new IndentPrintStream(output);
 			
 			construct(perspect, symbolTable, dom.namespace(), print);

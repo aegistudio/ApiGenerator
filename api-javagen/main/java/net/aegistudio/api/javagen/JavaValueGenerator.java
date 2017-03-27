@@ -10,11 +10,15 @@ import net.aegistudio.api.Value;
 import net.aegistudio.api.Value.Field;
 import net.aegistudio.api.gen.IndentPrintStream;
 import net.aegistudio.api.gen.SymbolTable;
+import net.aegistudio.api.gen.TypeTable;
 
 public class JavaValueGenerator extends JavaPerspectGenerator<Value> {
 	
 	protected void construct(Value valueType, SymbolTable symbolTable, 
 			Namespace namespace, IndentPrintStream valuePrint) throws IOException {
+		Type[] resultTypes = Arrays.stream(valueType.fields())
+				.map(Field::type).toArray(Type[]::new);
+				
 		// Java file header.
 		valuePrint.println("package <namespace>;"
 				.replace("<namespace>", namespace.concatenate(".")));
@@ -29,27 +33,23 @@ public class JavaValueGenerator extends JavaPerspectGenerator<Value> {
 		valuePrint.println("public class <type> {"
 				.replace("<type>", valueType.name()));
 		valuePrint.push();
-		valuePrint.println();
 		
 		// Construct fields.
 		for(Field field : valueType.fields()) {
-			String type = typeTable.convertType(
-					field.type()).name(namespace);
+			TypeTable.Result typeResult = typeTable
+					.convertType(field.type());
+			String type = typeResult.name(namespace);
 			String name = field.name();
 			valuePrint.println("public <type> <id>;"
 					.replace("<type>", type)
-					.replace("<name>", name));
+					.replace("<id>", name));
 		}
-		valuePrint.println();
-		
-		// Prepare I/O methods.
-		Type[] resultTypes = Arrays.stream(valueType.fields())
-				.map(Field::type).toArray(Type[]::new);
+		valuePrint.println(); 
 		
 		// Construct read method.
-		valuePrint.println("public static <type> read(DataInputStream dataInputStream, "
-				.replace("<type>", valueType.name()));
-		valuePrint.println("\tApiHost apiHost) throws IOException, ApiException {");
+		valuePrint.println(("public static <type> read(DataInputStream dataInputStream, " 
+				+ "ApiHost apiHost) throws IOException, ApiException {")
+					.replace("<type>", valueType.name()));
 		valuePrint.push();
 		valuePrint.println("<type> result = new <type>();"
 				.replace("<type>", valueType.name()));
@@ -63,8 +63,8 @@ public class JavaValueGenerator extends JavaPerspectGenerator<Value> {
 		valuePrint.println();
 		
 		// Construct write method.
-		valuePrint.println("public void write(DataOutputStream dataOutputStream, ");
-		valuePrint.println("\tApiHost apiHost) throws IOException, ApiException {");
+		valuePrint.println("public void write(DataOutputStream dataOutputStream, "
+				+ "ApiHost apiHost) throws IOException, ApiException {");
 		valuePrint.push();
 		String[] directFields = Arrays.stream(valueType.fields())
 				.map(Field::name).toArray(String[]::new);
@@ -72,7 +72,6 @@ public class JavaValueGenerator extends JavaPerspectGenerator<Value> {
 				"apiHost", valuePrint, resultTypes, directFields);
 		valuePrint.pop();
 		valuePrint.println("}");
-		valuePrint.println();
 		
 		// Java class body ends.
 		valuePrint.pop();

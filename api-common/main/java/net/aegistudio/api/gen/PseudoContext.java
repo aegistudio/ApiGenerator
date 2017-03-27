@@ -5,11 +5,16 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public class PseudoContext implements Context {
-	OutputStream outputStream;
-	String parent;
+	protected final OutputStream outputStream;
+	protected final String parent;
+	
 	public PseudoContext(OutputStream outputStream, String parent) {
 		this.outputStream = outputStream;
 		this.parent = parent;
+	}
+
+	public PseudoContext(OutputStream outputStream) {
+		this(outputStream, "");
 	}
 
 	@Override

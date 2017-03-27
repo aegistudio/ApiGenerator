@@ -54,18 +54,21 @@ class TestApiServer extends ApiHost {
 		return callTable;
 	}
 	
-	private void invokeFunctionCall1(DataInputStream dataInput, 
-			DataOutputStream dataOutput) throws IOException{
+	private void invokeFunctionCall1(ApiHost apiHost, 
+			DataInputStream dataInput, DataOutputStream dataOutput) 
+			throws IOException{
 		dataOutput.writeInt(functionCall1());
 	}
 	
-	private void invokeFunctionCall2(DataInputStream dataInput,
-			DataOutputStream dataOutput) throws IOException {
+	private void invokeFunctionCall2(ApiHost apiHost, 
+			DataInputStream dataInput, DataOutputStream dataOutput) 
+			throws IOException {
 		ApiFloat.writeFloat(dataOutput, functionCall2());
 	}
 	
-	private void invokeFunctionCall3(DataInputStream dataInput,
-			DataOutputStream dataOutput) throws IOException, ApiException {
+	private void invokeFunctionCall3(ApiHost apiHost, 
+			DataInputStream dataInput, DataOutputStream dataOutput) 
+			throws IOException, ApiException {
 		float[] input = ApiVariant.readFloat(dataInput);
 		ApiFloat.writeFloat(dataOutput, arraySum(input));
 	}

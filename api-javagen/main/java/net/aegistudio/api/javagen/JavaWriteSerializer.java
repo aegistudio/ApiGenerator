@@ -21,9 +21,9 @@ public class JavaWriteSerializer extends ComposeSerializer {
 				"ApiVariant.write(<stream>, <host>, <id>, ApiString::write);");
 		
 		// Value or handle objects.
-		compositeFilter(Filter.VALUE, "<type>");
-		compositeFilter(Filter.INTERFACE, "<type>");
-		compositeFilter(Filter.CALLBACK, "<type>");
+		compositeFilter(Filter.VALUE, "<typeSingle>");
+		compositeFilter(Filter.INTERFACE, "<typeSingle>");
+		compositeFilter(Filter.CALLBACK, "<typeSingle>");
 	}
 	
 	private void compositeFilter(Filter filter, String object) {

@@ -17,9 +17,12 @@ public class IndentPrintStream extends PrintStream {
 	}
 	
 	public void println(String line) {
-		for(int i = 0; i < currentIndent; i ++)
-			super.print(indent);
-		super.println(line);
+		String[] actualLines = line.split("\n");
+		for(String aLine : actualLines) {
+			for(int i = 0; i < currentIndent; i ++)
+				super.print(indent);
+			super.println(aLine);
+		}
 	}
 	
 	public void push() {

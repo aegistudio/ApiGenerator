@@ -25,7 +25,7 @@ public class ComposeSerializer implements Serializer {
 		for(FilteredSerializer decision : decisionChain) 
 			if(decision.test(typeResult, typeClass)) {
 				decision.serialize(printStream, namespace, ioStream, 
-						identifier, apiHost, typeResult, typeClass);
+						apiHost, identifier, typeResult, typeClass);
 				return;
 			}
 		throw new IllegalArgumentException(

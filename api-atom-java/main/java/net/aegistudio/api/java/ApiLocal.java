@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public abstract class ApiLocal extends ApiObject {
 	public interface Facade {
-		public void invoke(DataInputStream inputStream, 
+		public void invoke(ApiHost apiHost, DataInputStream inputStream, 
 				DataOutputStream outputStream) throws Exception;
 	}
 	
@@ -16,7 +16,7 @@ public abstract class ApiLocal extends ApiObject {
 	
 	protected int callOffset() { return 0; }
 	
-	public byte[] response(int call, byte[] data) throws ApiException {
+	public byte[] response(ApiHost apiHost, int call, byte[] data) throws ApiException {
 		int index = call - callOffset();
 		Facade[] table = callTable();
 		if(index < 0 || index >= table.length)
@@ -29,7 +29,7 @@ public abstract class ApiLocal extends ApiObject {
 		DataOutputStream dataOutput = new DataOutputStream(byteArrayOutput);
 		
 		try {
-			table[index].invoke(dataInput, dataOutput);
+			table[index].invoke(apiHost, dataInput, dataOutput);
 			return byteArrayOutput.toByteArray();
 		}
 		catch(Exception e) {

@@ -18,9 +18,9 @@ public class JavaReadSerializer extends ComposeSerializer {
 		compositeFilter(Filter.PRIMITIVE(Primitive.STRING), "ApiString");
 		
 		// Value or handle objects.
-		compositeFilter(Filter.VALUE, "<type>");
-		compositeFilter(Filter.INTERFACE, "<type>");
-		compositeFilter(Filter.CALLBACK, "<type>");
+		compositeFilter(Filter.VALUE, "<typeSingle>");
+		compositeFilter(Filter.INTERFACE, "<typeSingle>");
+		compositeFilter(Filter.CALLBACK, "<typeSingle>");
 	}
 	
 	private void compositeFilter(Filter filter, String object) {
@@ -28,7 +28,7 @@ public class JavaReadSerializer extends ComposeSerializer {
 				"<id> = <object>.read(<stream>, <host>);"
 					.replace("<object>", object));
 		super.add(Filter.VARIANT(filter), 
-				"<id> = ApiVariant.read(<stream>, <host>, <type>[]::new, <object>::read);"
+				"<id> = ApiVariant.read(<stream>, <host>, <typeSingle>[]::new, <object>::read);"
 					.replace("<object>", object));
 	}
 	
