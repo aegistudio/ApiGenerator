@@ -8,6 +8,7 @@ import net.aegistudio.api.Method;
 import net.aegistudio.api.Method.Parameter;
 import net.aegistudio.api.Namespace;
 import net.aegistudio.api.gen.IndentPrintStream;
+import net.aegistudio.api.gen.Interfacing;
 import net.aegistudio.api.gen.SymbolTable;
 import net.aegistudio.api.gen.TypeTable;
 
@@ -40,14 +41,7 @@ public abstract class JavaLocalGenerator extends JavaPerspectGenerator<Interfaci
 				.toArray(String[]::new);
 		
 		// Java file header.
-		localPrint.println("package <namespace>;"
-				.replace("<namespace>", namespace.concatenate(".")));
-		localPrint.println();
-		
-		localPrint.println("import java.io.*;");
-		localPrint.println("import net.aegistudio.api.java.*;");
-		localPrint.println("import net.aegistudio.api.java.extprim.*;");
-		localPrint.println();
+		super.javaHeader(localPrint, namespace);
 		
 		// Java class body begins.
 		localPrint.println("public abstract class <type> extends <parent> {"

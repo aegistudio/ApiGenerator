@@ -26,6 +26,9 @@ public abstract class ApiHost extends ApiLocal {
 		reverseRegistries.put(this, 0);
 	}
 	
+	// Default implementation for call table.
+	protected Facade[] callTable() {	return new Facade[0]; 	}
+	
 	private Map<Class<? extends Packet>, Consumer<Packet>> 
 		responders = new HashMap<>(); {
 		
@@ -147,7 +150,7 @@ public abstract class ApiHost extends ApiLocal {
 	
 	public <T> T call(int callee, int call, 
 			ResponderBlock<T> responder) throws ApiException {
-		return call(callee, call, i-> {}, responder);
+		return call(callee, call, i -> {}, responder);
 	}
 	
 	public void call(int callee, int call, RequesterBlock request)

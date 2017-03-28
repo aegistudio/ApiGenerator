@@ -60,4 +60,15 @@ public abstract class JavaPerspectGenerator<Perspect> implements Generator {
 					typeResult, symbolClass);
 		}
 	}
+	
+	protected void javaHeader(PrintStream printStream, Namespace namespace) {
+		printStream.println("package <namespace>;"
+				.replace("<namespace>", namespace.concatenate(".")));
+		printStream.println();
+		
+		printStream.println("import java.io.*;");
+		printStream.println("import net.aegistudio.api.java.*;");
+		printStream.println("import net.aegistudio.api.java.extprim.*;");
+		printStream.println();
+	}
 }

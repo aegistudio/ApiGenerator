@@ -16,11 +16,10 @@ public class JavaWriteSerializer extends ComposeSerializer {
 		
 		// String primitive.
 		Filter string = Filter.PRIMITIVE(Primitive.STRING);
-		super.add(Filter.SINGLE(string), "ApiString.write(<id>);");
-		super.add(Filter.SINGLE(string), 
-				"ApiVariant.write(<stream>, <host>, <id>, ApiString::write);");
+		compositeFilter(string, "ApiString");
 		
 		// Value or handle objects.
+
 		compositeFilter(Filter.VALUE, "<typeSingle>");
 		compositeFilter(Filter.INTERFACE, "<typeSingle>");
 		compositeFilter(Filter.CALLBACK, "<typeSingle>");
@@ -28,7 +27,7 @@ public class JavaWriteSerializer extends ComposeSerializer {
 	
 	private void compositeFilter(Filter filter, String object) {
 		super.add(Filter.SINGLE(filter), 
-				"<id>.write(<stream>, <host>);"
+				"<object>.write(<id>, <stream>, <host>);"
 					.replace("<object>", object));
 		super.add(Filter.VARIANT(filter), 
 				"ApiVariant.write(<stream>, <host>, <id>, <object>::write);"

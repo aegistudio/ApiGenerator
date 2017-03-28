@@ -20,14 +20,7 @@ public class JavaValueGenerator extends JavaPerspectGenerator<Value> {
 				.map(Field::type).toArray(Type[]::new);
 				
 		// Java file header.
-		valuePrint.println("package <namespace>;"
-				.replace("<namespace>", namespace.concatenate(".")));
-		valuePrint.println();
-		
-		valuePrint.println("import java.io.*;");
-		valuePrint.println("import net.aegistudio.api.java.*;");
-		valuePrint.println("import net.aegistudio.api.java.extprim.*;");
-		valuePrint.println();
+		super.javaHeader(valuePrint, namespace);
 		
 		// Java class body begins.
 		valuePrint.println("public class <type> {"

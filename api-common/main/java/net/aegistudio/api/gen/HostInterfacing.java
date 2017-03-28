@@ -1,4 +1,4 @@
-package net.aegistudio.api.javagen;
+package net.aegistudio.api.gen;
 
 import net.aegistudio.api.Document;
 import net.aegistudio.api.Method;

@@ -11,6 +11,9 @@ import org.junit.Test;
 import org.xml.sax.SAXException;
 
 import net.aegistudio.api.Document;
+import net.aegistudio.api.gen.HandleInterfacing;
+import net.aegistudio.api.gen.HostInterfacing;
+import net.aegistudio.api.gen.Interfacing;
 import net.aegistudio.api.gen.PseudoContext;
 import net.aegistudio.api.xmldom.XmlDocument;
 
@@ -28,6 +31,18 @@ public class TestVstGenerating {
 		JavaValueGenerator generator = new JavaValueGenerator();
 		generator.generate(context, dom);
 	}
+
+	private Interfacing[] allInterface(Document document, boolean client) {
+		List<Interfacing> interfacingList = new ArrayList<>();
+		interfacingList.add(new HostInterfacing(document, client));
+		Arrays.stream(document.interfaces())
+			.map(HandleInterfacing::new)
+			.forEach(interfacingList::add);
+		Arrays.stream(document.callbacks())
+			.map(HandleInterfacing::new)
+			.forEach(interfacingList::add);
+		return interfacingList.toArray(new Interfacing[0]);
+	}
 	
 	public @Test void testLocal() throws IOException {
 		PseudoContext context = new PseudoContext(System.out);
@@ -35,15 +50,20 @@ public class TestVstGenerating {
 
 			@Override
 			protected Interfacing[] perspect(Document document) {
-				List<Interfacing> interfacingList = new ArrayList<>();
-				interfacingList.add(new HostInterfacing(document, false));
-				Arrays.stream(document.interfaces())
-					.map(HandleInterfacing::new)
-					.forEach(interfacingList::add);
-				Arrays.stream(document.callbacks())
-					.map(HandleInterfacing::new)
-					.forEach(interfacingList::add);
-				return interfacingList.toArray(new Interfacing[0]);
+				return allInterface(document, false);
+			}
+			
+		};
+		generator.generate(context, dom);
+	}
+	
+	public @Test void testRemotel() throws IOException {
+		PseudoContext context = new PseudoContext(System.out);
+		JavaRemoteGenerator generator = new JavaRemoteGenerator() {
+
+			@Override
+			protected Interfacing[] perspect(Document document) {
+				return allInterface(document, true);
 			}
 			
 		};

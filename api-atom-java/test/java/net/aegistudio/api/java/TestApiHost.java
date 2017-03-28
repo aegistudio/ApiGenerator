@@ -31,11 +31,6 @@ class TestApiClient extends ApiHost {
 			ApiVariant.writeFloat(dataOutputStream, floatArray);
 		}, ApiFloat::readFloat);
 	}
-
-	@Override
-	protected Facade[] callTable() {
-		throw new IllegalStateException("No call table on client.");
-	}
 }
 
 class TestApiServer extends ApiHost {
