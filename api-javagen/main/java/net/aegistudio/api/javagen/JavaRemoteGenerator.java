@@ -2,6 +2,7 @@ package net.aegistudio.api.javagen;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.function.Function;
 
 import net.aegistudio.api.Document;
 import net.aegistudio.api.Method;
@@ -12,8 +13,15 @@ import net.aegistudio.api.gen.Interfacing;
 import net.aegistudio.api.gen.SymbolTable;
 import net.aegistudio.api.gen.TypeTable;
 
-public abstract class JavaRemoteGenerator extends JavaPerspectGenerator<Interfacing> {
-	protected abstract Interfacing[] perspect(Document document);
+public class JavaRemoteGenerator extends JavaPerspectGenerator<Interfacing> {
+	protected final Function<Document, Interfacing[]> mapping;
+	public JavaRemoteGenerator(Function<Document, Interfacing[]> mapping) {
+		this.mapping = mapping;
+	}
+	
+	protected Interfacing[] perspect(Document document) {
+		return mapping.apply(document);
+	}
 	
 	@Override
 	protected String name(Interfacing perspect) {

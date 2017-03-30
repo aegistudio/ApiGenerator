@@ -21,8 +21,7 @@ public abstract class JavaPerspectGenerator<Perspect> implements Generator {
 
 	@Override
 	public void generate(Context context, Document dom) throws IOException {
-		Context sourceFolder = context.step("main/java");
-		Context namespaceFolder = sourceFolder.step(
+		Context namespaceFolder = context.step(
 				dom.namespace().concatenate("/"));
 		SymbolTable symbolTable = new SymbolTable(dom);
 		

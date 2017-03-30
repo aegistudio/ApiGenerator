@@ -98,4 +98,20 @@ public class XmlDocument implements Document {
 	public Method[] functions() {
 		return functions;
 	}
+
+	@Override
+	public String version() {
+		String version = dom.getDocumentElement()
+				.getAttribute("version");
+		return version.length() == 0? 
+				"1.0" : version;
+	}
+
+	@Override
+	public String distribution() {
+		String distribution = dom.getDocumentElement()
+				.getAttribute("distribution");
+		return distribution.length() == 0?
+				"api" : distribution;
+	}
 }

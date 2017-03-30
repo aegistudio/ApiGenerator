@@ -16,6 +16,10 @@ public interface Document {
 	
 	public String serverHost();
 	
+	public String version();
+	
+	public String distribution();
+	
 	public Interface[] interfaces();
 	
 	public Interface[] callbacks();

@@ -14,6 +14,7 @@ public class FileContext implements Context {
 	
 	public FileContext(File root) {
 		this.root = root;
+		if(!root.exists()) root.mkdirs();
 	}
 	
 	public FileContext() {

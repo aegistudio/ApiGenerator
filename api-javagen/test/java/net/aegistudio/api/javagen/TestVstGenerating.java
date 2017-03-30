@@ -11,10 +11,11 @@ import org.junit.Test;
 import org.xml.sax.SAXException;
 
 import net.aegistudio.api.Document;
+import net.aegistudio.api.gen.Context;
+import net.aegistudio.api.gen.FileContext;
 import net.aegistudio.api.gen.HandleInterfacing;
 import net.aegistudio.api.gen.HostInterfacing;
 import net.aegistudio.api.gen.Interfacing;
-import net.aegistudio.api.gen.PseudoContext;
 import net.aegistudio.api.xmldom.XmlDocument;
 
 public class TestVstGenerating {
@@ -26,10 +27,9 @@ public class TestVstGenerating {
 				.getResourceAsStream("/vst.xml"));
 	}
 	
-	public @Test void testValue() throws IOException {
-		PseudoContext context = new PseudoContext(System.out);
-		JavaValueGenerator generator = new JavaValueGenerator();
-		generator.generate(context, dom);
+	protected Context makeContext(String preface) {
+		//context = new PseudoContext(System.out);
+		return new FileContext("target/test-output/" + preface);
 	}
 
 	private Interfacing[] allInterface(Document document, boolean client) {
@@ -44,29 +44,20 @@ public class TestVstGenerating {
 		return interfacingList.toArray(new Interfacing[0]);
 	}
 	
-	public @Test void testLocal() throws IOException {
-		PseudoContext context = new PseudoContext(System.out);
-		JavaLocalGenerator generator = new JavaLocalGenerator() {
-
-			@Override
-			protected Interfacing[] perspect(Document document) {
-				return allInterface(document, false);
-			}
-			
-		};
-		generator.generate(context, dom);
+	public @Test void testValue() throws IOException {
+		JavaValueGenerator generator = new JavaValueGenerator();
+		generator.generate(makeContext("value"), dom);
 	}
 	
-	public @Test void testRemotel() throws IOException {
-		PseudoContext context = new PseudoContext(System.out);
-		JavaRemoteGenerator generator = new JavaRemoteGenerator() {
-
-			@Override
-			protected Interfacing[] perspect(Document document) {
-				return allInterface(document, true);
-			}
-			
-		};
-		generator.generate(context, dom);
+	public @Test void testLocal() throws IOException {
+		JavaLocalGenerator generator = new JavaLocalGenerator(
+				dom -> this.allInterface(dom, false));
+		generator.generate(makeContext("local"), dom);
+	}
+	
+	public @Test void testRemote() throws IOException {
+		JavaRemoteGenerator generator = new JavaRemoteGenerator(
+				dom -> this.allInterface(dom, true));
+		generator.generate(makeContext("remote"), dom);
 	}
 }
