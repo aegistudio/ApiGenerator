@@ -56,11 +56,12 @@ public class JavaValueGenerator extends JavaPerspectGenerator<Value> {
 		valuePrint.println();
 		
 		// Construct write method.
-		valuePrint.println("public void write(DataOutputStream dataOutputStream, "
-				+ "ApiHost apiHost) throws IOException, ApiException {");
+		valuePrint.println(("public static void write(<type> value, DataOutputStream dataOutputStream, "
+				+ "ApiHost apiHost) throws IOException, ApiException {")
+					.replace("<type>", valueType.name()));
 		valuePrint.push();
 		String[] directFields = Arrays.stream(valueType.fields())
-				.map(Field::name).toArray(String[]::new);
+				.map(Field::name).map(name -> "value." + name).toArray(String[]::new);
 		this.ioMethod(symbolTable, namespace, writeSerial, "dataOutputStream", 
 				"apiHost", valuePrint, resultTypes, directFields);
 		valuePrint.pop();

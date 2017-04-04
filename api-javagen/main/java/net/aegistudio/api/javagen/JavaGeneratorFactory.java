@@ -53,7 +53,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
 	public Generator create(Map<String, String> configuration, boolean client, 
 			String languageText, String flavourText) {
 		String source = configuration.get("source");
-		//boolean generatePom = configuration.containsKey("generate-pom");
+		boolean generatePom = configuration.containsKey("generate-pom");
 		final Generator javaValue = new JavaValueGenerator();
 		final Generator interfaceGenerator = client? 
 				new JavaRemoteGenerator(this.allInterfaces(client)):
@@ -63,6 +63,9 @@ public class JavaGeneratorFactory implements GeneratorFactory {
 				new JavaLocalGenerator(this::allCallbacks):
 				new JavaRemoteGenerator(this::allCallbacks);
 		
+		final Generator pomGenerator = 
+				new JavaPomGenerator(flavourText, languageText, source);
+				
 		return new Generator() {
 			@Override
 			public void generate(Context context, Document dom) throws IOException {
@@ -71,6 +74,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
 				javaValue.generate(sourceDirectory, dom);
 				interfaceGenerator.generate(sourceDirectory, dom);
 				callbackGenerator.generate(sourceDirectory, dom);
+				if(generatePom) pomGenerator.generate(context, dom);
 			}
 		};
 	}

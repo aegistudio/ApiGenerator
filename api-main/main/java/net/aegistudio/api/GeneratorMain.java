@@ -77,7 +77,7 @@ public class GeneratorMain {
 		format.beginSection();
 		format.sectionText("output-directory", 
 				"Specify the root directory for where the generated code " +
-				"will output to. Defaultly set to \".\"");
+				"will output to. Defaultly set to \".\".");
 		format.sectionText("output-format", 
 				"Specify the format for generated code output. Maybe \"file\", " +
 				"\"jar\", \"console\". Defaultly set to \"file\".");
