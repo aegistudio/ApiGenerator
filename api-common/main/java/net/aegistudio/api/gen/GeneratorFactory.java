@@ -16,5 +16,6 @@ public interface GeneratorFactory {
 	/**
 	 * Create an API Generator for a provided configuration,
 	 */
-	public Generator create(Map<String, String> configuration);
+	public Generator create(Map<String, String> configuration, boolean client,
+			String languageText, String flavourText);
 }
