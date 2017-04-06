@@ -22,7 +22,7 @@ void swap(byte* buffer, int size) {
 	while(left < right) {
 		byte current = buffer[left];
 		buffer[left] = buffer[right];
-		buffer[right] = buffer[right];
+		buffer[right] = current;
 		left ++; right --;
 	}
 }

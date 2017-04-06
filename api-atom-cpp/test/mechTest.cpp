@@ -5,6 +5,6 @@
  */
 
 void test() throw (int) {
-	std::cout << "Running test base." << std::endl;
+	std::cout << "[INFO] Running test base." << std::endl;
 	assert(true, "This should not be false.");
 }
