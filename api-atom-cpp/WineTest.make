@@ -21,24 +21,24 @@
 # instead.
 COMPILER = mscl
 LINKER = mslink
-LIBTOOL = mslib
 CXXFLAGS = /Ot /GX
 
-SOURCE = src
+TEST = test
 INCLUDE = include
 
-targets = endian.obj inputStream.obj outputStream.obj\
-	bufferInputStream.obj bufferOutputStream.obj
+targets = mechTest.exe
 
 # ******************* NEVER MODIFY UNDER ***************
-all: api-atom-cpp.lib
+all: $(targets)
 
-api-atom-cpp.lib: $(targets)
-	$(LIBTOOL) /OUT:$@ $^ 
+$(targets): %.exe : $(TEST)/%.cpp testMain.obj
+	$(COMPILER) $(CXXFLAGS) /c $< /Fo$@.obj /I $(INCLUDE)
+	$(LINKER) $@.obj testMain.obj /OUT:$@
+	wine $@
 
-$(targets): %.obj : $(SOURCE)/%.cpp
-	$(COMPILER) $(CXXFLAGS) /c $< /Fo$@ /I $(INCLUDE)
+testMain.obj: $(TEST)/testMain.cpp
+	$(COMPILER) $(CXXFLAGS) /c $< /O $@
 
 clean: 
+	rm -rf *.exe
 	rm -rf *.obj
-	rm -rf *.lib

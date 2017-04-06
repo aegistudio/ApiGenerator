@@ -1,6 +1,8 @@
 #include "endian.h"
 #include <stdint.h>
 
+using namespace api;
+
 class BigEndian : public Endian {
 public:
 	virtual void host(byte*, int) {}

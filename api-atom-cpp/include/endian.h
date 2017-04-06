@@ -14,6 +14,7 @@
 #include <stdint.h>
 
 typedef int8_t byte;
+namespace api {
 
 class Endian {
 public:
@@ -24,4 +25,6 @@ public:
 	static Endian& integer();
 
 	static Endian& floating();
+};
+
 };
