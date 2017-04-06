@@ -19,7 +19,7 @@
 #pragma once
 
 #include "stream.h"
-#include <vector>
+#include <list>
 
 namespace api {
 
@@ -40,7 +40,7 @@ public:
 #define STACK_SIZE 128
 class BufferOutputStream : public OutputStream {
 	const int frameSize;
-	std::vector<int8_t*> buffers;
+	std::list<int8_t*> buffers;
 	int8_t* writing;
 	int index; int pointer;
 	int8_t absoluteFirst[STACK_SIZE];

@@ -18,8 +18,9 @@ int BufferOutputStream::size() const {
 }
 
 BufferOutputStream::~BufferOutputStream() {
-	int i; for(i = 0; i < index; i ++)
-		if(buffers[i]) delete buffers[i];
+	std::list<int8_t*>::iterator iter;
+	for(iter = buffers.begin(); iter != buffers.end(); iter ++)
+		if(*iter) delete (*iter);
 }
 
 int BufferOutputStream::inframeRemaining() const {
@@ -51,8 +52,9 @@ void BufferOutputStream::copy(int8_t* copying) const {
 		memcpy(copying, absoluteFirst, STACK_SIZE);
 		copying += STACK_SIZE;
 
-		for(int i = 0; i < index - 1; i ++) {
-			memcpy(copying, buffers[i], frameSize);
+		std::list<int8_t*>::const_iterator iter = buffers.begin();
+		for(int i = 0; i < index - 1; i ++, iter ++) {
+			memcpy(copying, *iter, frameSize);
 			copying += frameSize;
 		}
 		memcpy(copying, writing, pointer);
