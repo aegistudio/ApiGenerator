@@ -5,8 +5,11 @@
 using namespace api;
 
 BufferOutputStream::BufferOutputStream(int _frameSize): 
-	frameSize(_frameSize), writing(absoluteFirst), 
-	index(0), pointer(0) {}
+	frameSize(_frameSize),
+	index(0), pointer(0) {
+
+	writing = absoluteFirst;
+}
 
 int BufferOutputStream::size() const {
 	if(index == 0) return pointer;
@@ -35,7 +38,7 @@ void BufferOutputStream::write(int8_t* input, int size) {
 		memcpy(writing + pointer, input, remaining);
 		pointer = 0;
 		writing = new int8_t[frameSize];
-		buffers[index] = writing;
+		buffers.push_back(writing);
 		index ++;
 		write(input + remaining, size - remaining);
 	}

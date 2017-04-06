@@ -15,7 +15,7 @@ void BufferInputStream::read(int8_t* _buffer, int size) {
 	if(pointer + size > frameSize)
 		shouldCopy = frameSize - pointer;
 
-	memcpy(_buffer, buffer, shouldCopy);
+	memcpy(_buffer, buffer + pointer, shouldCopy);
 	pointer = pointer + shouldCopy;
 }
 

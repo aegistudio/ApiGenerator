@@ -26,7 +26,7 @@ CXXFLAGS = /Ot /GX
 TEST = test
 INCLUDE = include
 
-targets = mechTest.exe endianTest.exe
+targets = mechTest.exe endianTest.exe bufferTest.exe
 
 # ******************* NEVER MODIFY UNDER ***************
 all: $(targets)

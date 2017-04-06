@@ -51,7 +51,7 @@ public:
 
 	virtual ~BufferOutputStream();
 
-	virtual void write(int8_t*, int) = 0;
+	virtual void write(int8_t*, int);
 
 	int size() const;
 	
