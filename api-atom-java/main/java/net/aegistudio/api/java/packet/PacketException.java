@@ -47,6 +47,6 @@ public class PacketException implements Packet {
 
 	@Override
 	public int id() {
-		return 0x04;
+		return 0x02;
 	}
 }

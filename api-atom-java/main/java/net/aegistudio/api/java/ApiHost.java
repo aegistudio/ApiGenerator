@@ -10,10 +10,8 @@ import java.util.function.Consumer;
 
 import net.aegistudio.api.java.packet.Packet;
 import net.aegistudio.api.java.packet.PacketCall;
-import net.aegistudio.api.java.packet.PacketClientHello;
 import net.aegistudio.api.java.packet.PacketException;
 import net.aegistudio.api.java.packet.PacketReturn;
-import net.aegistudio.api.java.packet.PacketServerHello;
 
 public abstract class ApiHost extends ApiLocal {
 	protected final Map<Integer, ApiObject> registries = new WeakHashMap<>();
@@ -35,8 +33,6 @@ public abstract class ApiHost extends ApiLocal {
 		responderPut(PacketCall.class, this::handlePacketCall);
 		responderPut(PacketReturn.class, this::handlePacketReturn);
 		responderPut(PacketException.class, this::handlePacketException);
-		responderPut(PacketClientHello.class, this::handleClientHello);
-		responderPut(PacketServerHello.class, this::handleServerHello);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -101,16 +97,6 @@ public abstract class ApiHost extends ApiLocal {
 	
 	protected void handleApiException(ApiException e) {
 		e.printStackTrace();
-	}
-	
-	protected void handleClientHello(PacketClientHello clientHello) {
-		handleApiException(new ApiException(
-				"Cannot perform client hello on this side."));
-	}
-	
-	protected void handleServerHello(PacketServerHello clientHello) {
-		handleApiException(new ApiException(
-				"Cannot perform server hello on this side."));
 	}
 	
 	public int marshal(ApiObject apiObject) {

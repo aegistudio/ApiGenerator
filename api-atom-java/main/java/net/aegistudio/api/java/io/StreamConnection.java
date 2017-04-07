@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 
 import net.aegistudio.api.java.Connection;
 import net.aegistudio.api.java.packet.Packet;
-import net.aegistudio.api.java.packet.Protocol;
+import net.aegistudio.api.java.packet.PacketRegistry;
 
 public class StreamConnection implements Connection {
 	protected final ReaderThread reader;
@@ -14,8 +14,9 @@ public class StreamConnection implements Connection {
 	protected final Protocol protocol;
 	public StreamConnection(InputStream inputStream, 
 			OutputStream outputStream, Consumer<Packet> packet) {
-		this.protocol = new Protocol();
-		this.reader = new ReaderThread(inputStream, protocol, packet);
+		this.protocol = new DefaultProtocol(new PacketRegistry());
+		this.reader = new ReaderThread(inputStream, protocol, 
+				packet, this::send);
 		this.writer = new WriterThread(outputStream, protocol, packet);
 		
 		this.reader.start();

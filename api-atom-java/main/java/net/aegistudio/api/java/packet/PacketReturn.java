@@ -47,6 +47,6 @@ public class PacketReturn implements Packet {
 
 	@Override
 	public int id() {
-		return 0x03;
+		return 0x01;
 	}
 }

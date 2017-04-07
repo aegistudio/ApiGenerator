@@ -12,7 +12,6 @@ import net.aegistudio.api.java.extprim.ApiBytes;
  * 
  * <table>
  * 		<tr>
- * 			<th>PacketId</th>
  * 			<th>CallerId</th>
  *  		<th>CalleeId</th>
  * 			<th>CallId</th>
@@ -20,7 +19,6 @@ import net.aegistudio.api.java.extprim.ApiBytes;
  * 			<th>Parameter</th>
  * 		</tr>
  * 		<tr>
- * 			<td>0x02</td>
  * 			<td>Provided</td>
  * 			<td>Provided</td>
  * 			<td>Provided</td>
@@ -58,6 +56,6 @@ public class PacketCall implements Packet {
 
 	@Override
 	public int id() {
-		return 0x02;
+		return 0x00;
 	}
 }

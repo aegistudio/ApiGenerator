@@ -8,7 +8,6 @@ import net.aegistudio.api.java.ApiException;
 import net.aegistudio.api.java.packet.Packet;
 import net.aegistudio.api.java.packet.PacketCall;
 import net.aegistudio.api.java.packet.PacketException;
-import net.aegistudio.api.java.packet.Protocol;
 
 public class WriterThread extends Thread {
 	protected final DataOutputStream out;
