@@ -26,16 +26,16 @@ CXXFLAGS = /Ot /GX
 TEST = test
 INCLUDE = include
 
-targets = mechTest.exe endianTest.exe bufferTest.exe
+targets = mechTest.test endianTest.test bufferTest.test
 
 # ******************* NEVER MODIFY UNDER ***************
 all: $(targets)
 
-$(targets): %.exe : $(TEST)/%.cpp testMain.obj api-atom-cpp.lib
+$(targets): %.test : $(TEST)/%.cpp testMain.obj api-atom-cpp.lib
 	$(COMPILER) $(CXXFLAGS) /c $< /Fo$@.obj /I $(INCLUDE)
-	$(LINKER) $@.obj testMain.obj api-atom-cpp.lib /OUT:$@
+	$(LINKER) $@.obj testMain.obj api-atom-cpp.lib /OUT:$@.exe
 	@echo "[WINETEST] Running test $@:"
-	@wine $@
+	@wine $@.exe && mv $@.exe $@
 	@echo "[WINETEST] Test $@ succeed."
 
 testMain.obj: $(TEST)/testMain.cpp
@@ -45,6 +45,7 @@ api-atom-cpp.lib:
 	make -f WineBuild.make
 
 clean: 
+	rm -rf *.test
 	rm -rf *.lib
 	rm -rf *.exe
 	rm -rf *.obj

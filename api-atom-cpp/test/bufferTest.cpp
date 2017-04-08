@@ -1,6 +1,7 @@
 #include "testCase.h"
 #include "bufferStream.h"
 #include "stdio.h"
+#include "stringio.h"
 
 const double testFloating = 1.2345678;
 
@@ -17,11 +18,16 @@ void test() throw (int) {
 	
 	for(i = 0; i < 200; i ++)
 		output.writeDouble(testFloating);
+
+	std::string testString = "This is a string test";
+	for(i = 0; i < 20; i ++)
+		api::String::write(testString, output);
+
 	std::cout << "[INFO] Finishes write test." << std::endl;
 
 	// Replicate test.
 	int8_t* checkBuffer = output.clone();
-	std::cout << "[INFO] Finishes replication." << std::endl;
+	/*std::cout << "[INFO] Finishes replication." << std::endl;
 
 	std::cout << "[INFO] Showing the first 512 bytes: " << std::endl;
 	for(i = 0; i < 512; i ++) {
@@ -30,7 +36,7 @@ void test() throw (int) {
 		std::cout << current << " ";
 		if((i + 1) % 32 == 0)
 			std::cout << std::endl;
-	}
+	}*/
 
 	// Read integer test.
 	api::BufferInputStream input(output.size(), checkBuffer);
@@ -43,6 +49,11 @@ void test() throw (int) {
 		assertEquals(testFloating, input.readDouble());
 	std::cout << "[INFO] Finishes read floating test." << std::endl;
 	
+	// Read string test.
+	for(i = 0; i < 20; i ++)
+		assertEquals(api::String::read(input), testString);
+	std::cout << "[INFO] Finishes read string test." << std::endl;
+
 	// End test enclosure.
 	assertEquals(0, input.remaining());
 	std::cout << "[INFO] Finishes read test." << std::endl;

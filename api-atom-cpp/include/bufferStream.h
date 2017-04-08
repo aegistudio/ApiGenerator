@@ -30,7 +30,7 @@ class BufferInputStream : public InputStream {
 public:
 	BufferInputStream(int _frameSize, int8_t* _buffer);
 
-	virtual void read(int8_t*, int);
+	virtual void read(void*, int);
 
 	int remaining() const;
 
@@ -51,7 +51,7 @@ public:
 
 	virtual ~BufferOutputStream();
 
-	virtual void write(int8_t*, int);
+	virtual void write(const void*, int);
 
 	int size() const;
 	

@@ -28,7 +28,7 @@ int BufferOutputStream::inframeRemaining() const {
 	return frameSize - pointer;
 }
 
-void BufferOutputStream::write(int8_t* input, int size) {
+void BufferOutputStream::write(const void* input, int size) {
 	if(size == 0) return;
 	int remaining = inframeRemaining();
 	if(size < remaining) {
@@ -41,7 +41,7 @@ void BufferOutputStream::write(int8_t* input, int size) {
 		writing = new int8_t[frameSize];
 		buffers.push_back(writing);
 		index ++;
-		write(input + remaining, size - remaining);
+		write(((int8_t*)input) + remaining, size - remaining);
 	}
 }
 

@@ -7,7 +7,7 @@ BufferInputStream::BufferInputStream(int _frameSize, int8_t* _buffer):
 	frameSize(_frameSize), buffer(_buffer), pointer(0)	
 	{	}
 
-void BufferInputStream::read(int8_t* _buffer, int size) {
+void BufferInputStream::read(void* _buffer, int size) {
 	if(size == 0) return;
 	if(remaining() == 0) return;
 	int shouldCopy = size;

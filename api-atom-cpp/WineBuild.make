@@ -28,7 +28,9 @@ SOURCE = src
 INCLUDE = include
 
 targets = endian.obj inputStream.obj outputStream.obj\
-	bufferInputStream.obj bufferOutputStream.obj
+	bufferInputStream.obj bufferOutputStream.obj\
+	packetCall.obj packetReturn.obj packetException.obj\
+	stringio.obj apiException.obj
 
 # ******************* NEVER MODIFY UNDER ***************
 all: api-atom-cpp.lib

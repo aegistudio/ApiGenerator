@@ -17,7 +17,7 @@ namespace api {
 
 class InputStream {
 public:
-	virtual void read(int8_t*, int) = 0;
+	virtual void read(void*, int) = 0;
 
 	int8_t	readByte();
 
@@ -34,7 +34,7 @@ public:
 
 class OutputStream {
 public:
-	virtual void write(int8_t*, int) = 0;
+	virtual void write(const void*, int) = 0;
 
 	void	writeByte(int8_t);
 
