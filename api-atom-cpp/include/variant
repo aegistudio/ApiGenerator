@@ -1,0 +1,54 @@
+/**
+ * VARIANT - variant length container.
+ *
+ * A variant container whose size is determined
+ * at the very beginning but its content could
+ * be altered via accessor method.
+ *
+ * Thus this class has analogous behavior as the
+ * java array container.
+ */
+#pragma once
+
+namespace api {
+
+template<typename T>
+class variant {
+	T* data;
+public:
+	const int length;
+
+	variant(int size):
+		length(size), data(new T[size])
+		{}
+
+	variant(const variant<T>& copy):
+		length(copy.length),
+		data(new T[copy.length]) {
+
+		if(data) {
+			int index = 0;
+			for(; index < length; index ++)
+				data[index] = copy.data[index];
+		}
+	}
+
+	virtual ~variant() {
+		if(data) delete[] data;
+	}
+
+	// Retrive the data buffer of this container.
+	T* operator*() {
+		return data;
+	}
+	
+	T& operator[](int index) {
+		return data[index];
+	}
+
+	const T& operator[](int index) const {
+		return data[index];
+	}
+};
+
+};
