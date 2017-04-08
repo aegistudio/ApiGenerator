@@ -26,7 +26,8 @@ CXXFLAGS = /Ot /GX
 TEST = test
 INCLUDE = include
 
-targets = mechTest.test endianTest.test bufferTest.test
+targets = mechTest.test endianTest.test bufferTest.test\
+	packetTest.test
 
 # ******************* NEVER MODIFY UNDER ***************
 all: $(targets)

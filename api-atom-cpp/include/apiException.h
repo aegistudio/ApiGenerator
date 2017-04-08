@@ -19,6 +19,8 @@ namespace api {
 class ApiException {
 	std::string m_message;
 public:
+	ApiException();
+
 	ApiException(const std::string&);
 
 	const std::string& message();

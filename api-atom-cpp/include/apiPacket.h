@@ -1,5 +1,5 @@
 /**
- * PACKET.H - Packets
+ * APIPACKET.H - Api Packets
  *
  * Packets are datagrams that could
  * be switcted between different API

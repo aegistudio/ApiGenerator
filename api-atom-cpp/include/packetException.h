@@ -14,7 +14,7 @@
  */
 #pragma once
 
-#include "packet.h"
+#include "apiPacket.h"
 #include "apiException.h"
 #include "stream.h"
 
@@ -28,6 +28,8 @@ class PacketException : public Packet {
 public:
 	int caller;
 	ApiException exception;
+
+	PacketException();
 
 	virtual ~PacketException();
 

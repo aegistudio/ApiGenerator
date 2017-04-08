@@ -18,7 +18,7 @@
  */
 #pragma once
 
-#include "packet.h"
+#include "apiPacket.h"
 #include "stream.h"
 
 namespace api {

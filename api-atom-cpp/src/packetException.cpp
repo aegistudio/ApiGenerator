@@ -3,6 +3,8 @@
 
 using namespace api;
 
+PacketException::PacketException() {}
+
 PacketException::~PacketException() {}
 
 void PacketException::read(InputStream& inputStream) {
