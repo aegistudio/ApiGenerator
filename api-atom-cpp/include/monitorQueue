@@ -1,0 +1,46 @@
+/**
+ * MONITORQUEUE - Monitor Queue
+ *
+ * A monitor queue is a monitor on a queue
+ * that blocks a thread until some data 
+ * was fed into the monitor.
+ *
+ * Please notice it should not block the
+ * queue when there's some objects inside
+ * the monitor queue.
+ */
+
+#pragma once
+#include <queue>
+
+namespace api {
+
+template<typename T>
+class MonitorQueue {
+	Semaphore* semaphore;
+	std::queue<T> monitoredQueue;
+public:
+	MonitorQueue(Semaphore* _semaphore):
+		semaphore(_semaphore) {	}
+
+	virtual ~MonitorQueue() {
+		delete semaphore;
+	}
+
+	// @@@ Memory Leak Warning @@@
+	// The user listening on remove
+	// method should release memory!
+	virtual T remove() {
+		semaphore -> proberen();
+		T value = monitoredQueue.front(); 
+		monitoredQueue.pop();
+		return value;
+	}
+
+	virtual void add(T value) {
+		monitoredQueue.push(value);
+		semaphore -> verhogen();
+	}
+};
+
+};

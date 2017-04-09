@@ -27,10 +27,13 @@ CXXFLAGS = /Ot /GX /Op
 SOURCE = src
 INCLUDE = include
 
+# WinThread is built for Windows only.
+
 targets = endian.obj inputStream.obj outputStream.obj\
 	bufferInputStream.obj bufferOutputStream.obj\
 	packetCall.obj packetReturn.obj packetException.obj\
-	stringio.obj apiException.obj fileStream.obj
+	stringio.obj apiException.obj fileStream.obj\
+	winThread.obj winSemaphore.obj
 
 # ******************* NEVER MODIFY UNDER ***************
 all: api-atom-cpp.lib

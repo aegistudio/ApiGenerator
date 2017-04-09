@@ -27,7 +27,8 @@ TEST = test
 INCLUDE = include
 
 targets = mechTest.test endianTest.test bufferTest.test\
-	packetTest.test variantTest.test fileTest.test
+	packetTest.test variantTest.test fileTest.test\
+	winThreadTest.test winSemaphoreTest.test
 
 # ******************* NEVER MODIFY UNDER ***************
 all: $(targets)
