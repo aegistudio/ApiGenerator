@@ -8,8 +8,7 @@
 const int maxValue = 20;
 
 void test() throw (int) {
-	api::WinSemaphore semaphore;
-	api::MonitorQueue<int> monitorQueue(&semaphore);
+	api::MonitorQueue<int> monitorQueue(new api::WinSemaphore);
 
 	class ProducerThread : public api::Runnable {
 		int counter;

@@ -27,7 +27,7 @@ CXXFLAGS = /Ot /GX /Op
 SOURCE = src
 INCLUDE = include
 
-# WinThread is built for Windows only.
+# Win* is built for Windows only (requires WinAPI).
 
 targets = endian.obj inputStream.obj outputStream.obj\
 	bufferInputStream.obj bufferOutputStream.obj\
