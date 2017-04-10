@@ -27,7 +27,7 @@ void test() throw (int) {
 		}
 
 	} producer(monitorQueue);
-	api::WinThread producerThread(&producer);
+	api::WinThread* producerThread = new api::WinThread(&producer);
 
 	class ConsumerThread : public api::Runnable {
 		api::MonitorQueue<int>& queue;
@@ -49,7 +49,7 @@ void test() throw (int) {
 
 	consumerThread.start();
 	Sleep(1000L);
-	producerThread.start();
+	producerThread -> detach();
 
 	consumerThread.join();
 }

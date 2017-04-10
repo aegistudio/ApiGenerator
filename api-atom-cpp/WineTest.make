@@ -30,20 +30,24 @@ INCLUDE = include
 
 targets = mechTest.test endianTest.test bufferTest.test\
 	packetTest.test variantTest.test fileTest.test\
-	winThreadTest.test winSemaphoreTest.test
+	winThreadTest.test winSemaphoreTest.test\
+	transactionTest.test
 
 # ******************* NEVER MODIFY UNDER ***************
 all: $(targets)
 
-$(targets): %.test : $(TEST)/%.cpp testMain.obj api-atom-cpp.lib
+$(targets): %.test : $(TEST)/%.cpp testMain.obj winTestPlatform.obj api-atom-cpp.lib
 	$(COMPILER) $(CXXFLAGS) /c $< /Fo$@.obj /I $(INCLUDE)
-	$(LINKER) $@.obj testMain.obj api-atom-cpp.lib /OUT:$@.exe
+	$(LINKER) $@.obj testMain.obj winTestPlatform.obj api-atom-cpp.lib /OUT:$@.exe
 	@echo "[WINETEST] Running test $@:"
 	@wine $@.exe && mv $@.exe $@
 	@echo "[WINETEST] Test $@ succeed."
 
+winTestPlatform.obj: $(TEST)/winTestPlatform.cpp
+	$(COMPILER) $(CXXFLAGS) /I $(INCLUDE) /c $< /O $@
+
 testMain.obj: $(TEST)/testMain.cpp
-	$(COMPILER) $(CXXFLAGS) /c $< /O $@
+	$(COMPILER) $(CXXFLAGS) /I $(INCLUDE) /c $< /O $@
 
 api-atom-cpp.lib:
 	make -f WineBuild.make

@@ -3,11 +3,22 @@
 using namespace api;
 
 WinThread::WinThread(Runnable* _runnable):
-	Thread(_runnable), threadHandle(NULL) {}
+	Thread(_runnable), threadHandle(NULL),
+	detached(false) {}
 
-DWORD WINAPI WinThreadFunction(LPVOID paramRunnable) {
-	Runnable* runnable = (Runnable*)paramRunnable;
+Runnable* WinThread::getRunnable() const {
+	return runnable;
+}
+
+bool WinThread::isDetached() const {
+	return detached;
+}
+
+DWORD WINAPI WinThreadFunction(LPVOID paramWinThread) {
+	WinThread* winThread = (WinThread*)paramWinThread;
+	Runnable* runnable = winThread -> getRunnable();
 	runnable -> run();
+	if(winThread -> isDetached()) delete winThread;
 	return 0;
 }
 
@@ -20,8 +31,13 @@ void WinThread::start() {
 	
 	threadHandle = CreateThread(
 		NULL, 0, WinThreadFunction, 
-		reinterpret_cast<LPVOID>(runnable), 
+		reinterpret_cast<LPVOID>(this), 
 		0, NULL);
+}
+
+void WinThread::detach() {
+	detached = true;
+	start();
 }
 
 void WinThread::join() {

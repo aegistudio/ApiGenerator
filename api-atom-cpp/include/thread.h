@@ -27,6 +27,8 @@ public:
 
 	virtual void start() = 0;
 
+	virtual void detach() = 0;
+
 	virtual void join() = 0;
 
 	virtual void kill() = 0;

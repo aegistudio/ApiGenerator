@@ -7,6 +7,7 @@ namespace api {
 
 class WinThread : public Thread {
 	HANDLE threadHandle;
+	bool detached;
 public:
 	WinThread(Runnable* _runnable);
 
@@ -14,9 +15,15 @@ public:
 
 	virtual void start();
 
+	virtual void detach();
+
 	virtual void kill();
 
 	virtual void join();
+
+	Runnable* getRunnable() const;
+
+	bool isDetached() const;
 };
 
 };

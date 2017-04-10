@@ -3,6 +3,8 @@
 #include <string>
 #include <sstream>
 
+#include "platform.h"
+
 void assert(bool statement, std::string message, int errorCode = 1);
 
 template<typename T>
@@ -15,3 +17,5 @@ void assertEquals(T expected, T get, int errorCode = 2) {
 }
 
 void test() throw(int);
+
+api::Platform& getPlatform();
