@@ -5,12 +5,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import net.aegistudio.api.java.ApiException;
-import net.aegistudio.api.java.packet.Packet;
 
-public interface Protocol {
-	public Packet parse(DataInputStream input) 
+public interface Protocol<T> {
+	public T parse(DataInputStream input) 
 			throws IOException, ApiException;
 	
 	public void transfer(DataOutputStream output, 
-			Packet packet) throws IOException;
+			T something) throws IOException;
 }

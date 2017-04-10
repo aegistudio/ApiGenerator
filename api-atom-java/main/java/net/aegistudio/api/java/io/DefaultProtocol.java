@@ -9,7 +9,7 @@ import net.aegistudio.api.java.ApiException;
 import net.aegistudio.api.java.packet.Packet;
 import net.aegistudio.api.java.packet.PacketRegistry;
 
-public class DefaultProtocol implements Protocol {
+public class DefaultProtocol implements Protocol<Packet> {
 	protected final PacketRegistry registry;
 	public DefaultProtocol(PacketRegistry registry) {
 		this.registry = registry;

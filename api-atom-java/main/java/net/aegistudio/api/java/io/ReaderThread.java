@@ -6,52 +6,37 @@ import java.io.InputStream;
 import java.util.function.Consumer;
 
 import net.aegistudio.api.java.ApiException;
-import net.aegistudio.api.java.packet.Packet;
-import net.aegistudio.api.java.packet.PacketException;
 
-public class ReaderThread extends Thread {
+public class ReaderThread<T> extends Thread {
 	protected final DataInputStream in;
-	protected final Protocol protocol;
-	protected final Consumer<Packet> packetConsumer;
-	protected final Consumer<PacketException> routeBackConsumer;
+	protected final Protocol<T> protocol;
+	protected final Consumer<T> packetConsumer;
+	protected final Consumer<Exception> errorConsumer;
 	
 	public ReaderThread(InputStream inputStream, 
-			Protocol protocol, Consumer<Packet> packet,
-			Consumer<PacketException> routeBack) {
+			Protocol<T> protocol, Consumer<T> packet,
+			Consumer<Exception> error) {
 		this.in = new DataInputStream(inputStream);
 		this.protocol = protocol;
 		this.packetConsumer = packet;
-		this.routeBackConsumer = routeBack;
+		this.errorConsumer = error;
 	}
 	
 	public void run() {
 		try {
 			while(open) {
 				try {
-					Packet packet = protocol.parse(in);
+					T packet = protocol.parse(in);
 					new Thread(() ->
 						packetConsumer.accept(packet)).start();
 				}
 				catch(ApiException e) {
-					if(open) {
-						PacketException packet = new PacketException();
-						
-						packet.caller = 0;
-						packet.exception = e;
-						
-						routeBackConsumer.accept(packet);
-					}
+					if(open) errorConsumer.accept(e);
 				}
 			}
 		}
 		catch(IOException e) {
-			if(open) {
-				PacketException packet = new PacketException();
-				
-				packet.caller = 0;
-				packet.exception = new ApiException(e);
-				packetConsumer.accept(packet);
-			}
+			if(open) errorConsumer.accept(e);
 		}
 	}
 	
