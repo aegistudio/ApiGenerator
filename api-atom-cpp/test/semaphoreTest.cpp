@@ -1,14 +1,13 @@
 #include "testCase.h"
 
-#include "winSemaphore.h"
-#include "winThread.h"
 #include <monitorQueue>
 #include <iostream>
 
 const int maxValue = 20;
 
 void test() throw (int) {
-	api::MonitorQueue<int> monitorQueue(new api::WinSemaphore);
+	api::Platform& platform = getPlatform();
+	api::MonitorQueue<int> monitorQueue(platform.newSemaphore());
 
 	class ProducerThread : public api::Runnable {
 		int counter;
@@ -27,8 +26,8 @@ void test() throw (int) {
 		}
 
 	} producer(monitorQueue);
-	api::WinThread* producerThread = new api::WinThread(&producer);
-
+	api::Thread* producerThread = platform.newThread(&producer);	
+	
 	class ConsumerThread : public api::Runnable {
 		api::MonitorQueue<int>& queue;
 	public:
@@ -45,11 +44,12 @@ void test() throw (int) {
 			while(value < maxValue);
 		}
 	} consumer(monitorQueue);
-	api::WinThread consumerThread(&consumer);
+	api::Thread* consumerThread = platform.newThread(&consumer);
 
-	consumerThread.start();
+	consumerThread -> start();
 	sleep(500L);
 	producerThread -> detach();
 
-	consumerThread.join();
+	consumerThread -> join();
+	delete consumerThread;
 }

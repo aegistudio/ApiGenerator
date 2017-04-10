@@ -26,11 +26,9 @@ CXXFLAGS = /Ot /GX
 TEST = test
 INCLUDE = include
 
-# Win*Test.test is built for Windows only, requires WinAPI.
-
 targets = mechTest.test endianTest.test bufferTest.test\
 	packetTest.test variantTest.test fileTest.test\
-	winThreadTest.test winSemaphoreTest.test\
+	threadTest.test semaphoreTest.test\
 	transactionTest.test
 
 # ******************* NEVER MODIFY UNDER ***************

@@ -1,5 +1,4 @@
 #include "testCase.h"
-#include "winThread.h"
 #include <iostream>
 
 void testJoin() throw (int);
@@ -30,9 +29,11 @@ void testJoin() throw (int) {
 
 	assertEquals(0, loopRunnable.loopCounter);
 
-	api::WinThread theThread(&loopRunnable);
-	theThread.start();
-	theThread.join();
+	api::Thread* theThread = getPlatform()
+		.newThread(&loopRunnable);
+	theThread -> start();
+	theThread -> join();
+	delete theThread;
 
 	assertEquals(theCounter, loopRunnable.loopCounter);
 
