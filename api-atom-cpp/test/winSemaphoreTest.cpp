@@ -22,7 +22,7 @@ void test() throw (int) {
 				std::cout << "Provider sent: "
 					<< counter << std::endl;
 				queue.add(counter);
-				Sleep(10L);
+				sleep(10L);
 			}
 		}
 
@@ -48,7 +48,7 @@ void test() throw (int) {
 	api::WinThread consumerThread(&consumer);
 
 	consumerThread.start();
-	Sleep(1000L);
+	sleep(500L);
 	producerThread -> detach();
 
 	consumerThread.join();

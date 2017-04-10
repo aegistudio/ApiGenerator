@@ -1,4 +1,5 @@
 #pragma once
+#include <stdint.h>
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -17,5 +18,7 @@ void assertEquals(T expected, T get, int errorCode = 2) {
 }
 
 void test() throw(int);
+
+void sleep(int64_t mills);
 
 api::Platform& getPlatform();
