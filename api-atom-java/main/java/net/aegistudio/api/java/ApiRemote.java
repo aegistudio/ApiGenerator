@@ -12,7 +12,7 @@ import java.util.function.BiFunction;
  * @author aegistudio
  */
 
-public class ApiRemote extends ApiObject {
+public class ApiRemote {
 	protected final int handle;
 	protected final ApiHost host;
 	

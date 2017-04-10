@@ -34,7 +34,9 @@ public class TestStreamConnection extends ThreadingTest {
 			assertEquals(received.caller, sent.caller);
 			assertEquals(received.callee, sent.callee);
 			assertEquals(new String(received.parameter), parameter);
-			counter ++;
+			synchronized(this) {
+				counter ++;
+			}
 		});
 		
 		// The client connection should not receive any packet.
@@ -43,7 +45,11 @@ public class TestStreamConnection extends ThreadingTest {
 		for(int i = 0; i < 1000; i ++) client.send(sent);
 				
 		// Wait for complete.
-		runWhile(() -> (counter < 1000));
+		runWhile(() -> {
+			synchronized(this) {
+				return (counter < 1000);
+			}
+		});
 		
 		// Clean up and close.
 		client.close();

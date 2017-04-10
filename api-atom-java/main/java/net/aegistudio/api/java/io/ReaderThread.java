@@ -27,18 +27,21 @@ public class ReaderThread extends Thread {
 	public void run() {
 		try {
 			while(open) {
-				Packet packet = protocol.parse(in);
-				packetConsumer.accept(packet);
-			}
-		}
-		catch(ApiException e) {
-			if(open) {
-				PacketException packet = new PacketException();
-				
-				packet.caller = 0;
-				packet.exception = e;
-				
-				routeBackConsumer.accept(packet);
+				try {
+					Packet packet = protocol.parse(in);
+					new Thread(() ->
+						packetConsumer.accept(packet)).start();
+				}
+				catch(ApiException e) {
+					if(open) {
+						PacketException packet = new PacketException();
+						
+						packet.caller = 0;
+						packet.exception = e;
+						
+						routeBackConsumer.accept(packet);
+					}
+				}
 			}
 		}
 		catch(IOException e) {
