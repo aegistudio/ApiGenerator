@@ -28,6 +28,8 @@ public:
 	int caller;
 	int size;	int8_t* result;
 
+	PacketReturn();
+
 	virtual ~PacketReturn();
 
 	inline virtual int id() { return PacketType::PacketReturn; }

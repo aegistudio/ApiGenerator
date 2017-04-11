@@ -28,10 +28,10 @@ public:
 	void insert(PacketFactory&);
 
 	virtual Packet* newPacket(int packetid) 
-		throw (ApiException) = 0;
+		throw (ApiException);
 
 	virtual int lookPacket(Packet* packet) 
-		throw (ApiException) = 0;
+		throw (ApiException);
 };
 
 };

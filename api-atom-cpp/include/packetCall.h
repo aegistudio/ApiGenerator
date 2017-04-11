@@ -35,6 +35,8 @@ public:
 
 	int size;	int8_t* parameter;
 
+	PacketCall();
+
 	virtual ~PacketCall();
 
 	inline virtual int id() { return PacketType::PacketCall; }

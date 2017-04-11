@@ -62,7 +62,10 @@ void BufferOutputStream::copy(int8_t* copying) const {
 }
 
 int8_t* BufferOutputStream::clone() const {
-	int8_t* output = new int8_t[size()];
-	if(output) copy(output);
-	return output;
+	if(size() > 0) {
+		int8_t* output = new int8_t[size()];
+		if(output) copy(output);
+		return output;
+	}
+	else return NULL;
 }

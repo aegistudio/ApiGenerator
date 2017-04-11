@@ -29,7 +29,7 @@ INCLUDE = include
 targets = mechTest.test endianTest.test bufferTest.test\
 	packetTest.test variantTest.test fileTest.test\
 	threadTest.test semaphoreTest.test\
-	transactionTest.test
+	transactionTest.test protocolTest.test
 
 # ******************* NEVER MODIFY UNDER ***************
 all: $(targets)
