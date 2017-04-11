@@ -16,18 +16,21 @@
 #include "apiException.h"
 #include "apiLocal.h"
 #include "platform.h"
+#include "connection.h"
+#include <variant>
 
 namespace api {
 
 class ApiObject;
 
-class ApiHost : public ApiLocal {
+class ApiHost : public ApiLocal, PacketHandler {
 	std::map<int32_t, ApiObject*> objects;
 	std::map<ApiObject*, int32_t> ids;
 protected:
 	Platform& platform;
+	Connection* connection;
 public:	
-	ApiHost(Platform&);
+	ApiHost(ConnectionFactory&, Platform&);
 
 	virtual ~ApiHost();
 
@@ -37,10 +40,13 @@ public:
 
 	ApiObject* search(int32_t) throw (ApiException);
 
-	int8_t* call(int32_t, int32_t, int8_t*) throw (ApiException);
+	variant<int8_t> call(int32_t, int32_t, variant<int8_t>&) 
+		throw (ApiException);
 
 	virtual void invoke(int32_t, InputStream&, OutputStream&) 
 		throw (ApiException) {}
+	
+	virtual void handle(Packet* packet);
 };
 
 };

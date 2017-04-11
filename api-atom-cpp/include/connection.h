@@ -11,6 +11,7 @@
  */
 
 #pragma once
+#include "apiPacket.h"
 
 namespace api {
 

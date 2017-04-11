@@ -22,6 +22,15 @@ public:
 		length(size), data(new T[size])
 		{}
 
+	// @@@ Memory Leak Warning @@@
+	// Invocation to this method will transfer
+	// ownership of the data to this object,
+	// and may cause double free if manage it
+	// else where.
+	variant(int size, T* theData):
+		length(size), data(theData)
+		{}
+
 	variant(const variant<T>& copy):
 		length(copy.length),
 		data(new T[copy.length]) {

@@ -37,7 +37,7 @@ public:
 
 	virtual Packet* newPacket(int packetId) throw (ApiException) = 0;
 
-	virtual int lookPacket(Packet* packet) = 0;
+	virtual int lookPacket(Packet* packet) throw (ApiException) = 0;
 };
 
 };

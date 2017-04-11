@@ -34,7 +34,8 @@ targets = endian.obj inputStream.obj outputStream.obj\
 	packetCall.obj packetReturn.obj packetException.obj\
 	stringio.obj apiException.obj fileStream.obj\
 	winThread.obj winSemaphore.obj winPlatform.obj\
-	apiObject.obj apiTransaction.obj apiHost.obj
+	apiObject.obj apiTransaction.obj apiHost.obj\
+	defaultRegistry.obj defaultProtocol.obj
 
 # ******************* NEVER MODIFY UNDER ***************
 all: api-atom-cpp.lib
