@@ -36,7 +36,7 @@ targets = endian.obj inputStream.obj outputStream.obj\
 	winThread.obj winSemaphore.obj winPlatform.obj\
 	apiObject.obj apiTransaction.obj apiHost.obj\
 	defaultRegistry.obj defaultProtocol.obj\
-	streamConnection.obj
+	streamConnection.obj pipeStream.obj
 
 # ******************* NEVER MODIFY UNDER ***************
 all: api-atom-cpp.lib

@@ -28,8 +28,9 @@ INCLUDE = include
 
 targets = mechTest.test endianTest.test bufferTest.test\
 	packetTest.test variantTest.test fileTest.test\
-	threadTest.test semaphoreTest.test\
-	transactionTest.test protocolTest.test
+	threadTest.test semaphoreTest.test pipeTest.test\
+	transactionTest.test protocolTest.test\
+	apiHostTest.test
 
 # ******************* NEVER MODIFY UNDER ***************
 all: $(targets)

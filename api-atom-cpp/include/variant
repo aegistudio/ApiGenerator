@@ -50,6 +50,17 @@ public:
 	T* operator*() {
 		return data;
 	}
+
+	// @@@ Memory Leak Warning @@@
+	// This method will transfer the ownership out
+	// of this object, and current object will no
+	// longer own this array. So target owner should
+	// handle memory correctly.
+	T* transfer() {
+		T* result = data;
+		data = NULL;
+		return result;
+	}
 	
 	T& operator[](int index) {
 		return data[index];

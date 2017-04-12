@@ -41,14 +41,14 @@ void WinThread::detach() {
 }
 
 void WinThread::join() {
-	if(!threadHandle) return;
+	if(threadHandle == NULL) return;
 	WaitForSingleObject(threadHandle, INFINITE);
 	CloseHandle(threadHandle);
 	threadHandle = NULL;
 }
 
 void WinThread::kill() {
-	if(!threadHandle) return;
+	if(threadHandle == NULL) return;
 	TerminateThread(threadHandle, 0);
 	CloseHandle(threadHandle);
 	threadHandle = NULL;

@@ -34,7 +34,12 @@ void ApiHost::close() {
 	connection -> close();
 }
 
+void ApiHost::detach() {
+	connection -> detach();
+}
+
 // ------ Marshal & Demarshal Management -------------
+#include <iostream>
 int32_t ApiHost::marshal(ApiObject* apiObject) {
 	if(ids.count(apiObject)) return ids[apiObject];
 	
@@ -43,6 +48,7 @@ int32_t ApiHost::marshal(ApiObject* apiObject) {
 		pointerValue ++;
 	
 	objects[pointerValue] = apiObject;
+	ids[apiObject] = pointerValue;
 	apiObject -> remember(this);
 	return pointerValue;
 }
@@ -52,6 +58,7 @@ void ApiHost::demarshal(ApiObject* apiObject) {
 		int32_t pointerValue = ids[apiObject];
 		objects.erase(pointerValue);
 		ids.erase(apiObject);
+		apiObject -> forget(this);
 	}
 }
 
@@ -77,7 +84,7 @@ variant<int8_t> ApiHost::call(int32_t calleeId, int32_t callId,
 	callPacket -> callee = calleeId;
 	callPacket -> call = callId;
 	callPacket -> size = callData.length;
-	callPacket -> parameter = *callData;
+	callPacket -> parameter = callData.transfer();
 	connection -> send(callPacket);
 
 	// Wait for result, if an exception is generated,

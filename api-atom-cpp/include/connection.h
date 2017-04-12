@@ -17,32 +17,39 @@ namespace api {
 
 class PacketHandler {
 public:
-	virtual void handle(Packet&) = 0;
+	virtual void handle(Packet*) = 0;
 };
 
 class Connection {
 public:
+	virtual ~Connection() {}
+
 	// Warning: sending packet will transfer
 	// ownership to the connection, please 
 	// be aware of double-free corruption
 	// caused by improper ownership.
 	virtual void send(Packet*) = 0;
 
+	// Start the thread on a daemon thread.
+	virtual void detach() = 0;
+
 	// Run into eternal loop of waiting
 	// for packet, block until close called.
 	virtual void start() = 0;
 
-	// Exit the eternal waiting loop.
+	// End the connection.
 	virtual void close() = 0;
 };
 
 class ConnectionFactory {
 public:
+	virtual ~ConnectionFactory() {}
+
 	// @@@ Memory Leak Warning @@@
 	// Invocation to this method is equivalent
 	// to invocation to constructor denoted by
 	// this factory.
-	virtual Connection* newConnection(PacketHandler&);
+	virtual Connection* newConnection(PacketHandler&) = 0;
 };
 
 };

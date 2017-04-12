@@ -42,6 +42,10 @@ public:
 
 	virtual ~ApiHost();
 
+	// Start on a daemon thread, may be
+	// closed via ApiHost::close()
+	virtual void detach();
+
 	// Start on this thread will cause
 	// the thread to run into a eternal
 	// loop of waiting for ApiCall.
