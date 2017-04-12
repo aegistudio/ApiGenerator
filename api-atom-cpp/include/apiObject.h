@@ -36,6 +36,8 @@ public:
 	void remember(ApiHost*);
 
 	void forget(ApiHost*);
+
+	virtual bool callable() { return false; }
 };
 
 };

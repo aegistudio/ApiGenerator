@@ -29,6 +29,14 @@ class ApiHost : public ApiLocal, PacketHandler {
 protected:
 	Platform& platform;
 	Connection* connection;
+
+	virtual void handleCall(Packet*);
+
+	virtual void handleReturn(Packet*);
+
+	virtual void handleException(Packet*);
+
+	virtual void generalExcept(ApiException);
 public:	
 	ApiHost(ConnectionFactory&, Platform&);
 

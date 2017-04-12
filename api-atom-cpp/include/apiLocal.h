@@ -21,6 +21,8 @@ public:
 	virtual void invoke(int32_t callId, 
 		InputStream& request, OutputStream& response) 
 		throw (ApiException) {}
+
+	virtual bool callable() { return true; }
 };
 
 };

@@ -4,6 +4,8 @@
 #include <writerThread>
 #include <monitorQueue>
 #include <memory>
+#include "packetException.h"
+#include "packetCall.h"
 
 using namespace api;
 
@@ -23,14 +25,27 @@ public:
 	}
 
 	virtual void handleError(ApiException exception) {
-		// Ignore.
+		PacketException readErrorPacket;
+		readErrorPacket.caller = 0;
+		readErrorPacket.exception = exception;
+		packetHandle.handle(readErrorPacket);
 	}
 };
 
 class StreamWriteHandler : public WriterHandler<Packet> {
+	PacketHandler& packetHandle;
 public:
+	StreamWriteHandler(PacketHandler& _handle):
+		packetHandle(_handle) {}
+
 	virtual void handleError(Packet* packet, ApiException e) {
-		// Ignore.
+		if(packet != NULL && (packet -> id() == PacketType::PacketCall)) {
+			PacketCall* call = reinterpret_cast<PacketCall*>(packet);
+			PacketException writeErrorPacket;
+			writeErrorPacket.caller = call -> caller;
+			writeErrorPacket.exception = e;
+			packetHandle.handle(writeErrorPacket);
+		}
 	}
 };
 
@@ -76,7 +91,7 @@ StreamConnection::StreamConnection(
 	readerThreadHandle(_pt.newThread(&readerThread)),
 	
 	// Writer handler.
-	writeHandler(), monitorQueue(_pt.newSemaphore()),
+	writeHandler(packetHandle), monitorQueue(_pt.newSemaphore()),
 	writerThread(_ptcl, _o, writeHandler, monitorQueue),
 	writerThreadHandle(_pt.newThread(&writerThread)) {
 }

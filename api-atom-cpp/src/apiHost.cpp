@@ -1,7 +1,12 @@
 #include "apiHost.h"
 #include "apiObject.h"
 #include "apiTransaction.h"
+
 #include "packetCall.h"
+#include "packetReturn.h"
+#include "packetException.h"
+
+#include "bufferStream.h"
 
 #include <sstream>
 
@@ -87,5 +92,101 @@ variant<int8_t> ApiHost::call(int32_t calleeId, int32_t callId,
 }
 
 void ApiHost::handle(Packet* packet) {
+	if(packet == NULL) return;
+	switch(packet -> id()) {
+		// packet instanceof api::PacketCall
+		case PacketType::PacketCall:
+			handleCall(packet);
+		break;
+
+		// packet instanceof api::PacketReturn
+		case PacketType::PacketReturn:
+			handleReturn(packet);
+		break;
+
+		// packet instanceof api::PacketException
+		case PacketType::PacketException:
+			handleException(packet);
+		break;
+		
+		// Unknown instance, will do nothing.
+		default:
+		break;
+	}
+}
+
+void ApiHost::handleCall(Packet* packet) {
+	PacketCall* packetCall = reinterpret_cast<PacketCall*>(packet);
+	try {
+		ApiObject* target = search(packetCall -> callee);
+		if(!(target -> callable()))
+			throw ApiException("Target not callable!");
+		else {
+			ApiLocal* callable = reinterpret_cast<ApiLocal*>(target);
+
+			BufferInputStream inputStream(
+				packetCall -> size, 
+				packetCall -> parameter);
+
+			BufferOutputStream outputStream;
+
+			callable -> invoke(packetCall -> call, 
+				inputStream, outputStream);
+
+			PacketReturn* callResult = new PacketReturn;
+			callResult -> caller = packetCall -> caller;
+			callResult -> size = outputStream.size();
+			callResult -> result = outputStream.clone();
+			connection -> send(callResult);
+		}
+	}
+	catch(ApiException e) {
+		PacketException* callError = new PacketException;
+		callError -> caller = packetCall -> caller;
+		callError -> exception = e;
+		connection -> send(callError);
+	}
+}
+
+void ApiHost::handleReturn(Packet* packet) {
+	PacketReturn* packetReturn = reinterpret_cast<PacketReturn*>(packet);
+	try {
+		ApiObject* target = search(packetReturn -> caller);
+		if(target -> callable()) 
+			throw ApiException("Not a transaction.");
+		else {
+			ApiTransaction* transaction 
+				= reinterpret_cast<ApiTransaction*>(target);
+			transaction -> result(
+				packetReturn -> size, packetReturn -> result);
+		}
+	}
+	catch(ApiException e) {
+		generalExcept(e);
+	}
+}
+
+void ApiHost::handleException(Packet* packet) {
+	PacketException* packetException = reinterpret_cast<PacketException*>(packet);
+	if(packetException -> caller == 0)
+		generalExcept(packetException -> exception);
+	else {
+		try {
+			ApiObject* target = search(packetException -> caller);
+			if(target -> callable()) 
+				throw ApiException("Not a transaction.");
+			else {
+				ApiTransaction* transaction 
+					= reinterpret_cast<ApiTransaction*>(target);
+				transaction -> except(packetException -> exception);
+			}
+		}
+		catch(ApiException e) {
+			generalExcept(e);
+		}
+	}
+}
+
+void ApiHost::generalExcept(ApiException e) {
 
 }
