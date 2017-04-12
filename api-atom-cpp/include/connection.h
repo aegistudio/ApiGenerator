@@ -27,6 +27,13 @@ public:
 	// be aware of double-free corruption
 	// caused by improper ownership.
 	virtual void send(Packet*) = 0;
+
+	// Run into eternal loop of waiting
+	// for packet, block until close called.
+	virtual void start() = 0;
+
+	// Exit the eternal waiting loop.
+	virtual void close() = 0;
 };
 
 class ConnectionFactory {
@@ -35,8 +42,7 @@ public:
 	// Invocation to this method is equivalent
 	// to invocation to constructor denoted by
 	// this factory.
-	virtual Connection* newConnection(
-		const PacketHandler&);
+	virtual Connection* newConnection(PacketHandler&);
 };
 
 };

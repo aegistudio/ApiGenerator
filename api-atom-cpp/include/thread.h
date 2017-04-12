@@ -18,12 +18,16 @@ public:
 
 class Thread {
 protected:
+	bool ownRunnable;
 	Runnable* runnable;
 public:
-	Thread(Runnable* _runnable):
-		runnable(_runnable) {}
+	Thread(Runnable* _runnable, bool _ownRunnable):
+		runnable(_runnable), ownRunnable(_ownRunnable) {}
 
-	virtual ~Thread() {}
+	virtual ~Thread() {
+		if(ownRunnable && runnable)
+			delete runnable;
+	}
 
 	virtual void start() = 0;
 

@@ -21,6 +21,14 @@ ApiHost::~ApiHost() {
 	if(connection) delete connection;
 }
 
+void ApiHost::start() {
+	connection -> start();
+}
+
+void ApiHost::close() {
+	connection -> close();
+}
+
 // ------ Marshal & Demarshal Management -------------
 int32_t ApiHost::marshal(ApiObject* apiObject) {
 	if(ids.count(apiObject)) return ids[apiObject];

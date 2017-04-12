@@ -5,8 +5,8 @@
 
 using namespace api;
 
-Thread* WinPlatform::newThread(Runnable* runnable) {
-	return new WinThread(runnable);
+Thread* WinPlatform::newThread(Runnable* runnable, bool ownRunnable) {
+	return new WinThread(runnable, ownRunnable);
 }
 
 Semaphore* WinPlatform::newSemaphore() {

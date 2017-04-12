@@ -2,9 +2,9 @@
 
 using namespace api;
 
-WinThread::WinThread(Runnable* _runnable):
-	Thread(_runnable), threadHandle(NULL),
-	detached(false) {}
+WinThread::WinThread(Runnable* _runnable, bool _ownRunnable):
+	Thread(_runnable, _ownRunnable), 
+	threadHandle(NULL), detached(false) {}
 
 Runnable* WinThread::getRunnable() const {
 	return runnable;
@@ -52,4 +52,9 @@ void WinThread::kill() {
 	TerminateThread(threadHandle, 0);
 	CloseHandle(threadHandle);
 	threadHandle = NULL;
+
+	// The guard condition threadHandle
+	// guarentees that this code will not
+	// be executed twice.
+	if(isDetached()) delete this;
 }

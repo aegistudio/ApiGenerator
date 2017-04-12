@@ -26,7 +26,7 @@ class Platform {
 public:
 	virtual ~Platform() {}
 
-	virtual Thread* newThread(Runnable*) = 0;
+	virtual Thread* newThread(Runnable*, bool = false) = 0;
 
 	virtual Semaphore* newSemaphore() = 0;	
 };

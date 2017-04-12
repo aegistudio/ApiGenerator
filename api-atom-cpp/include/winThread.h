@@ -9,7 +9,7 @@ class WinThread : public Thread {
 	HANDLE threadHandle;
 	bool detached;
 public:
-	WinThread(Runnable* _runnable);
+	WinThread(Runnable* _runnable, bool _ownRunnable);
 
 	virtual ~WinThread();
 

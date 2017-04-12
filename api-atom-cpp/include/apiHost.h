@@ -34,6 +34,16 @@ public:
 
 	virtual ~ApiHost();
 
+	// Start on this thread will cause
+	// the thread to run into a eternal
+	// loop of waiting for ApiCall.
+	virtual void start();
+
+	// You may have to close the host
+	// from different thread of the
+	// ApiHost::start thread.
+	virtual void close();
+
 	int32_t marshal(ApiObject*);
 
 	void demarshal(ApiObject*);
