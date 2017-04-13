@@ -3,16 +3,20 @@
 
 using namespace api;
 
+ApiObject::ApiObject():
+	valid(true) {}
+
 ApiObject::~ApiObject() {
+	valid = false;
 	std::set<ApiHost*>::iterator iter;
 	for(iter = hosts.begin(); iter != hosts.end(); iter ++)
 		(*iter) -> demarshal(this);
 }
 
 void ApiObject::remember(ApiHost* host) {
-	hosts.insert(host);
+	if(valid) hosts.insert(host);
 }
 
 void ApiObject::forget(ApiHost* host) {
-	hosts.erase(host);
+	if(valid) hosts.erase(host);
 }

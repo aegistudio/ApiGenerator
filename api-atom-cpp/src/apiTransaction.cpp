@@ -1,6 +1,7 @@
 #include "apiTransaction.h"
 
 #include <stddef.h>
+#include <string.h>
 
 using namespace api;
 
@@ -13,7 +14,10 @@ ApiTransaction::~ApiTransaction() {
 
 void ApiTransaction::result(int32_t blockSize, int8_t* block) {
 	size = blockSize;
-	response = block;
+	if(blockSize > 0) {
+		response = new int8_t[blockSize];
+		memcpy(response, block, blockSize);
+	}
 	semaphore -> verhogen();
 }
 

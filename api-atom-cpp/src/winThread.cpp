@@ -18,13 +18,12 @@ DWORD WINAPI WinThreadFunction(LPVOID paramWinThread) {
 	WinThread* winThread = (WinThread*)paramWinThread;
 	Runnable* runnable = winThread -> getRunnable();
 	runnable -> run();
-	if(winThread -> isDetached()) delete winThread;
-	winThread -> finish();
+	if(winThread -> isDetached()) 
+		delete winThread;
 	return 0;
 }
 
 WinThread::~WinThread() {
-	//kill();
 	finish();
 }
 
@@ -56,10 +55,13 @@ void WinThread::kill() {
 	// The guard condition threadHandle
 	// guarentees that this code will not
 	// be executed twice.
-	if(isDetached()) delete this;
+	if(isDetached()) 
+		delete this;
 }
 
 void WinThread::finish() {
-	CloseHandle(threadHandle);
-	threadHandle = NULL;
+	if(threadHandle != NULL) {
+		CloseHandle(threadHandle);
+		threadHandle = NULL;
+	}
 }

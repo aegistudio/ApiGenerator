@@ -17,7 +17,7 @@
 #include "apiLocal.h"
 #include "platform.h"
 #include "connection.h"
-#include <variant>
+#include <apiVariant>
 
 namespace api {
 

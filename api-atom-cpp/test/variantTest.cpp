@@ -1,5 +1,5 @@
 #include "testCase.h"
-#include <variant>
+#include <apiVariant>
 #include <iostream>
 
 api::variant<int> copyInteger(int size) {

@@ -1,5 +1,5 @@
 /**
- * VARIANT - variant length container.
+ * APIVARIANT - variant length container.
  *
  * A variant container whose size is determined
  * at the very beginning but its content could
@@ -43,7 +43,8 @@ public:
 	}
 
 	virtual ~variant() {
-		if(data) delete[] data;
+		if(length > 0 && data) 
+			delete[] data;
 	}
 
 	// Retrive the data buffer of this container.

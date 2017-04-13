@@ -19,11 +19,11 @@ ApiHost::ApiHost(ConnectionFactory& _factory, Platform& _platform):
 }
 
 ApiHost::~ApiHost() {
+	if(connection) delete connection;
+
 	std::map<int32_t, ApiObject*>::iterator iter;
 	for(iter = objects.begin(); iter != objects.end(); iter ++) 
 		(*iter).second -> forget(this);
-	
-	if(connection) delete connection;
 }
 
 void ApiHost::start() {

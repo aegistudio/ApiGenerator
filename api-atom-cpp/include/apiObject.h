@@ -29,8 +29,12 @@ namespace api {
 class ApiHost;
 
 class ApiObject {
+	bool valid;
+
 	std::set<ApiHost*> hosts;
 public:	
+	ApiObject();
+
 	virtual ~ApiObject();
 
 	void remember(ApiHost*);
