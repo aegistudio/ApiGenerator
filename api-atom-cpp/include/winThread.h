@@ -24,6 +24,8 @@ public:
 	Runnable* getRunnable() const;
 
 	bool isDetached() const;
+
+	void finish();
 };
 
 };

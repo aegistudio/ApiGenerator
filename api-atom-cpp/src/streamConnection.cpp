@@ -77,8 +77,6 @@ public:
 
 	virtual void start();
 
-	virtual void detach();
-
 	virtual void close();
 };
 
@@ -95,31 +93,19 @@ StreamConnection::StreamConnection(
 	readerThreadHandle(_pt.newThread(&readerThread)),
 	
 	// Writer handler.
-	writeHandler(packetHandle), monitorQueue(_pt.newSemaphore()),
+	writeHandler(packetHandle), monitorQueue(_pt),
 	writerThread(_ptcl, _o, writeHandler, monitorQueue),
 	writerThreadHandle(_pt.newThread(&writerThread)) {
 }
 
-void StreamConnection::detach() {
+void StreamConnection::start() {
 	readerThreadHandle -> start();
 	writerThreadHandle -> start();
-}
-
-void StreamConnection::start() {
-	detach();
-
-	// We just need to wait for the stop of
-	// reader thread.
-	readerThreadHandle -> join();
-	writerThreadHandle -> join();
 }
 
 void StreamConnection::close() {
 	readerThreadHandle -> kill();
 	writerThreadHandle -> kill();
-
-	readerThreadHandle -> join();
-	writerThreadHandle -> join();
 }
 
 void StreamConnection::send(Packet* packet) {

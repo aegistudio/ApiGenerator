@@ -3,6 +3,8 @@
 *.lib
 *.dll
 *.test
+*.ilk
+*.pdb
 
 *.o
 *.a

@@ -2,7 +2,6 @@
 
 #include "protocol.h"
 #include <monitorQueue>
-#include <memory>
 
 namespace api {
 
@@ -27,13 +26,16 @@ public:
 	virtual void run() {
 		// Can only be terminated by api::Thread::kill().
 		while(1) {
-			std::auto_ptr<T> data(monitorQueue.remove());
+			T* data = monitorQueue.remove();
+			if(data == NULL) continue;
+
 			try {
-				protocol.transfer(data.get(), outputStream);	
+				protocol.transfer(data, outputStream);	
 			}
 			catch(ApiException e) {
-				writerHandler.handleError(data.get(), e);
+				writerHandler.handleError(data, e);
 			}
+			delete data;
 		}
 	}
 };

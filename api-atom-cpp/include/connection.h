@@ -31,10 +31,6 @@ public:
 	virtual void send(Packet*) = 0;
 
 	// Start the thread on a daemon thread.
-	virtual void detach() = 0;
-
-	// Run into eternal loop of waiting
-	// for packet, block until close called.
 	virtual void start() = 0;
 
 	// End the connection.

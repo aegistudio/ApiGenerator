@@ -12,33 +12,45 @@
 
 #pragma once
 #include <queue>
+#include "platform.h"
+#include <memory>
 
 namespace api {
 
 template<typename T>
 class MonitorQueue {
-	Semaphore* semaphore;
+	std::auto_ptr<Semaphore> semaphore;
+	std::auto_ptr<Semaphore> mutex;
 	std::queue<T> monitoredQueue;
 public:
-	MonitorQueue(Semaphore* _semaphore):
-		semaphore(_semaphore) {	}
+	MonitorQueue(Platform& platform):
+		semaphore(platform.newSemaphore()), 
+		mutex(platform.newSemaphore()) {
 
-	virtual ~MonitorQueue() {
-		delete semaphore;
+		mutex -> verhogen();
 	}
+
+	virtual ~MonitorQueue() {}
 
 	// @@@ Memory Leak Warning @@@
 	// The user listening on remove
 	// method should release memory!
 	virtual T remove() {
 		semaphore -> proberen();
+
+		mutex -> proberen();
 		T value = monitoredQueue.front(); 
 		monitoredQueue.pop();
+		mutex -> verhogen();
+
 		return value;
 	}
 
 	virtual void add(T value) {
+		mutex -> proberen();
 		monitoredQueue.push(value);
+		mutex -> verhogen();
+
 		semaphore -> verhogen();
 	}
 };

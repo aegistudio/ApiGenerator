@@ -26,31 +26,32 @@ public:
 };
 
 template <typename T>
+class AsyncReadHandler : public Runnable {
+	ReaderHandler<T>& handler;
+	std::auto_ptr<T> data;
+public:
+	AsyncReadHandler(ReaderHandler<T>& _handler, T* _data):
+		handler(_handler), data(_data) {}
+
+	virtual ~AsyncReadHandler() {}
+
+	virtual void run() {
+		handler.handleData(data.get());
+	}
+};
+
+template <typename T>
 class ReaderThread : public Runnable {
 	Protocol<T>& protocol;
 	Platform& platform;
 	InputStream& inputStream;
 	ReaderHandler<T>& handler;
 public:
-	class AsyncReadHandler : public Runnable {
-		ReaderHandler<T>& handler;
-		std::auto_ptr<T> data;
-	public:
-		AsyncReadHandler(ReaderHandler<T>& _handler, T* _data):
-			handler(_handler), data(_data) {}
-
-		virtual ~AsyncReadHandler() {}
-
-		virtual void run() {
-			handler.handleData(data.get());
-		}
-	};
 
 	ReaderThread(Platform& _platform, InputStream& _inputStream, 
 		Protocol<T>& _protocol, ReaderHandler<T>& _handler):
 		platform(_platform), inputStream(_inputStream),
 		protocol(_protocol), handler(_handler) {}
-
 
 	virtual void run() {
 		// To stop it, you could only use api::Thread::kill()
@@ -58,7 +59,7 @@ public:
 			try {
 				T* something = protocol.receive(inputStream);
 				platform.newThread(
-					new AsyncReadHandler(handler, something), true) -> detach();
+					new AsyncReadHandler<T>(handler, something), true) -> detach();
 			}
 			catch(ApiException e) {
 				handler.handleError(e);

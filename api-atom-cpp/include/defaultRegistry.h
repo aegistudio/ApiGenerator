@@ -25,7 +25,7 @@ class DefaultRegistry : public PacketRegistry {
 public:
 	DefaultRegistry();
 
-	void insert(PacketFactory&);
+	void insert(PacketFactory*);
 
 	virtual Packet* newPacket(int packetid) 
 		throw (ApiException);

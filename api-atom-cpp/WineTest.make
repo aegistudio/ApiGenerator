@@ -21,7 +21,7 @@
 # instead.
 COMPILER = mscl
 LINKER = mslink
-CXXFLAGS = /Ot /GX
+CXXFLAGS = /GX
 
 TEST = test
 INCLUDE = include
@@ -30,14 +30,14 @@ targets = mechTest.test endianTest.test bufferTest.test\
 	packetTest.test variantTest.test fileTest.test\
 	threadTest.test semaphoreTest.test pipeTest.test\
 	transactionTest.test protocolTest.test\
-	apiHostTest.test
+	singleConnTest.test apiHostTest.test
 
 # ******************* NEVER MODIFY UNDER ***************
 all: $(targets)
 
 $(targets): %.test : $(TEST)/%.cpp testMain.obj winTestPlatform.obj api-atom-cpp.lib
 	$(COMPILER) $(CXXFLAGS) /c $< /Fo$@.obj /I $(INCLUDE)
-	$(LINKER) $@.obj testMain.obj winTestPlatform.obj api-atom-cpp.lib /OUT:$@.exe
+	$(LINKER) /DEBUG $@.obj testMain.obj winTestPlatform.obj api-atom-cpp.lib /OUT:$@.exe
 	@echo "[WINETEST] Running test $@:"
 	@wine $@.exe && mv $@.exe $@
 	@echo "[WINETEST] Test $@ succeed."
@@ -56,3 +56,5 @@ clean:
 	rm -rf *.lib
 	rm -rf *.exe
 	rm -rf *.obj
+	rm -rf *.ilk
+	rm -rf *.pdb

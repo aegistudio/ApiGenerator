@@ -2,7 +2,7 @@
 
 using namespace api;
 
-Pipe::Pipe(Platform& platform): pipe(platform.newSemaphore()), 
+Pipe::Pipe(Platform& platform): pipe(platform), 
 	input(pipe), output(pipe) {}
 
 PipeInputStream::PipeInputStream(MonitorQueue<int8_t>& _pipe):

@@ -34,12 +34,7 @@ void ApiHost::close() {
 	connection -> close();
 }
 
-void ApiHost::detach() {
-	connection -> detach();
-}
-
 // ------ Marshal & Demarshal Management -------------
-#include <iostream>
 int32_t ApiHost::marshal(ApiObject* apiObject) {
 	if(ids.count(apiObject)) return ids[apiObject];
 	
@@ -194,6 +189,7 @@ void ApiHost::handleException(Packet* packet) {
 	}
 }
 
+#include <iostream>
 void ApiHost::generalExcept(ApiException e) {
-
+	std::cerr << e.message() << std::endl;
 }

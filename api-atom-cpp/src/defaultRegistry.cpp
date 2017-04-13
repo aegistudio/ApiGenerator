@@ -9,41 +9,42 @@
 
 using namespace api;
 
+
+class CallFactory : public PacketFactory {
+public:
+	virtual Packet* newPacket() {
+		return new PacketCall();
+	}
+} packetCallFactory;
+
+class ReturnFactory : public PacketFactory {
+public:
+	virtual Packet* newPacket() {
+		return new PacketReturn();
+	}
+} packetReturnFactory;
+
+class ExceptionFactory : public PacketFactory {
+public:
+	virtual Packet* newPacket() {
+		return new PacketException();
+	}
+} packetExceptionFactory;
+
 DefaultRegistry::DefaultRegistry() {
 	int i = 0; for(; i < MAX_PACKET; i ++)
 		registry[i] = NULL;
-
-	// Register packet call.
-	static class CallFactory : public PacketFactory {
-	public:
-		virtual Packet* newPacket() {
-			return new PacketCall();
-		}
-	} packetCallFactory;
-	insert(packetCallFactory);
-
-	// Register packet return.
-	static class ReturnFactory : public PacketFactory {
-	public:
-		virtual Packet* newPacket() {
-			return new PacketReturn();
-		}
-	} packetReturnFactory;
-	insert(packetReturnFactory);
-
-	// Register packet return.
-	static class ExceptionFactory : public PacketFactory {
-	public:
-		virtual Packet* newPacket() {
-			return new PacketException();
-		}
-	} packetExceptionFactory;
-	insert(packetExceptionFactory);
+	insert(&packetCallFactory);
+	insert(&packetReturnFactory);
+	insert(&packetExceptionFactory);
 }
 
-void DefaultRegistry::insert(PacketFactory& factory) {
-	std::auto_ptr<Packet> packetNew(factory.newPacket());
-	registry[packetNew -> id()] = &factory;
+void DefaultRegistry::insert(PacketFactory* factory) {
+	Packet* packetNew = factory -> newPacket();
+	if(packetNew) {
+		registry[packetNew -> id()] = factory;
+		delete packetNew;
+	}
 }
 
 Packet* DefaultRegistry::newPacket(int packetId) 

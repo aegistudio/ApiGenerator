@@ -40,7 +40,7 @@ public:
 	float threeSum(float _a1, float _a2, float _a3) 
 		throw (api::ApiException) {
 		// Deliberately wait some time.
-		sleep(100L);
+		sleep(1000L);
 
 		return _a1 + _a2 + _a3;
 	}
@@ -89,8 +89,8 @@ void test() throw (int) {
 	ApiClient client(clientConnection);
 	ApiServer server(serverConnection);
 
-	client.detach();
-	server.detach();
+	client.start();
+	server.start();
 
 	assertEquals(server.threeSum(1.0f, 2.0f, 3.0f),
 		client.threeSum(1.0f, 2.0f, 3.0f));
@@ -104,8 +104,13 @@ void test() throw (int) {
 		client.threeSum(3.141592f, -2.7182818f, 1.7320508f));
 	std::cout << "[INFO] Result 3 correct." << std::endl;
 
+	assertEquals(server.threeSum(400.0f, 3.0f, 2.0f),
+		client.threeSum(400.0f, 3.0f, 2.0f));
+	std::cout << "[INFO] Result 4 correct." << std::endl;
+
 	std::cout << "[INFO] Finished pseudo apiHost test." << std::endl;
 
-	//client.close();
-	//server.close();
+	sleep(1000l);
+	client.close();
+	server.close();
 }

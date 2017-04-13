@@ -13,6 +13,8 @@ namespace api {
 
 class Runnable {
 public:
+	virtual ~Runnable() {}
+
 	virtual void run() = 0;
 };
 
