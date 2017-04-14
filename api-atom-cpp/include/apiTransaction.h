@@ -22,6 +22,7 @@ class ApiTransaction : public ApiObject {
 	ApiException exception;
 	Semaphore* semaphore;
 	int32_t size; int8_t* response;
+	bool abnormal;
 public:
 	ApiTransaction(Semaphore*);
 

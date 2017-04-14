@@ -40,7 +40,7 @@ public:
 	float threeSum(float _a1, float _a2, float _a3) 
 		throw (api::ApiException) {
 		// Deliberately wait some time.
-		//sleep(1000L);
+		sleep(300L);
 
 		return _a1 + _a2 + _a3;
 	}

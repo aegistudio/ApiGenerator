@@ -8,7 +8,7 @@ export lib_targets="\
 	winThread.obj winSemaphore.obj winPlatform.obj\
 	apiObject.obj apiTransaction.obj apiHost.obj\
 	defaultRegistry.obj defaultProtocol.obj\
-	streamConnection.obj pipeStream.obj\
+	streamConnection.obj pipeStream.obj apiRemote.obj\
 "
 
 export test_targets="\

@@ -17,7 +17,7 @@
 
 COMPILER = mingw32-g++
 LINKER = mingw32-ld
-CXXFLAGS = -O2
+CXXFLAGS = -g -O3
 LDFLAGS = -lgcc -lstdc++ -lntdll -lmingw32 -lkernel32 -lmingwex
 
 TEST = test

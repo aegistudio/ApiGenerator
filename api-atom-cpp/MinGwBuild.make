@@ -18,7 +18,7 @@
 COMPILER = mingw32-g++
 LINKER = mingw32-ld
 LIBTOOL = mingw32-ar
-CXXFLAGS = -O2
+CXXFLAGS = -O3 
 
 SOURCE = src
 INCLUDE = include
