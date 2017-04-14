@@ -6,7 +6,7 @@
 
 #include "platform.h"
 
-void assert(bool statement, std::string message, int errorCode = 1);
+void assertClause(bool statement, std::string message, int errorCode = 1);
 
 template<typename T>
 void assertEquals(T expected, T get, int errorCode = 2) {
@@ -14,7 +14,7 @@ void assertEquals(T expected, T get, int errorCode = 2) {
 	output << "Assert equals fail: ";
 	output << "Expected: " << expected << ", ";
 	output << "Get: " << get << ".";
-	assert(expected == get, output.str(), errorCode);
+	assertClause(expected == get, output.str(), errorCode);
 }
 
 void test() throw(int);

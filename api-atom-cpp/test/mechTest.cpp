@@ -6,5 +6,5 @@
 
 void test() throw (int) {
 	std::cout << "[INFO] Running test base." << std::endl;
-	assert(true, "This should not be false.");
+	assertClause(true, "This should not be false.");
 }

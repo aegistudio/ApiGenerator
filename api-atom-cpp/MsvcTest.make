@@ -21,32 +21,34 @@
 # instead.
 COMPILER = mscl
 LINKER = mslink
-LIBTOOL = mslib
-CXXFLAGS = /GX /Op
+CXXFLAGS = /GX
 
-SOURCE = src
+TEST = test
 INCLUDE = include
 
-# Win* is built for Windows only (requires WinAPI).
-
-targets = endian.obj inputStream.obj outputStream.obj\
-	bufferInputStream.obj bufferOutputStream.obj\
-	packetCall.obj packetReturn.obj packetException.obj\
-	stringio.obj apiException.obj fileStream.obj\
-	winThread.obj winSemaphore.obj winPlatform.obj\
-	apiObject.obj apiTransaction.obj apiHost.obj\
-	defaultRegistry.obj defaultProtocol.obj\
-	streamConnection.obj pipeStream.obj
-
 # ******************* NEVER MODIFY UNDER ***************
-all: api-atom-cpp.lib
+all: $(test_targets)
 
-api-atom-cpp.lib: $(targets)
-	$(LIBTOOL) /OUT:$@ $^ 
+$(test_targets): %.test : $(TEST)/%.cpp testMain.obj winTestPlatform.obj api-atom-cpp.lib
+	$(COMPILER) $(CXXFLAGS) /c $< /Fo$@.obj /I $(INCLUDE)
+	$(LINKER) /DEBUG $@.obj testMain.obj winTestPlatform.obj api-atom-cpp.lib /OUT:$@.exe
+	@echo "[WINETEST] Running test $@:"
+	@wine $@.exe && mv $@.exe $@
+	@echo "[WINETEST] Test $@ succeed."
 
-$(targets): %.obj : $(SOURCE)/%.cpp
-	$(COMPILER) $(CXXFLAGS) /c $< /Fo$@ /I $(INCLUDE)
+winTestPlatform.obj: $(TEST)/winTestPlatform.cpp
+	$(COMPILER) $(CXXFLAGS) /I $(INCLUDE) /c $< /O $@
+
+testMain.obj: $(TEST)/testMain.cpp
+	$(COMPILER) $(CXXFLAGS) /I $(INCLUDE) /c $< /O $@
+
+api-atom-cpp.lib:
+	$(MAKEFILE) MsvcBuild.make
 
 clean: 
-	rm -rf *.obj
+	rm -rf *.test
 	rm -rf *.lib
+	rm -rf *.exe
+	rm -rf *.obj
+	rm -rf *.ilk
+	rm -rf *.pdb

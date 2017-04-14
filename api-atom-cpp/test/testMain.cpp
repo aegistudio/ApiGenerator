@@ -1,6 +1,6 @@
 #include "testCase.h"
 
-void assert(bool statement, std::string message, int errorCode) {
+void assertClause(bool statement, std::string message, int errorCode) {
 	if(!(statement)) {
 		std::cerr << message << std::endl;
 		throw (errorCode);

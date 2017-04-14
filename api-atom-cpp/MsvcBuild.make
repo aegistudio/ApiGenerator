@@ -21,40 +21,21 @@
 # instead.
 COMPILER = mscl
 LINKER = mslink
-CXXFLAGS = /GX
+LIBTOOL = mslib
+CXXFLAGS = /GX /Op
 
-TEST = test
+SOURCE = src
 INCLUDE = include
 
-targets = mechTest.test endianTest.test bufferTest.test\
-	packetTest.test variantTest.test fileTest.test\
-	threadTest.test semaphoreTest.test pipeTest.test\
-	transactionTest.test protocolTest.test\
-	singleConnTest.test apiHostTest.test
-
 # ******************* NEVER MODIFY UNDER ***************
-all: $(targets)
+all: api-atom-cpp.lib
 
-$(targets): %.test : $(TEST)/%.cpp testMain.obj winTestPlatform.obj api-atom-cpp.lib
-	$(COMPILER) $(CXXFLAGS) /c $< /Fo$@.obj /I $(INCLUDE)
-	$(LINKER) /DEBUG $@.obj testMain.obj winTestPlatform.obj api-atom-cpp.lib /OUT:$@.exe
-	@echo "[WINETEST] Running test $@:"
-	@wine $@.exe && mv $@.exe $@
-	@echo "[WINETEST] Test $@ succeed."
+api-atom-cpp.lib: $(lib_targets)
+	$(LIBTOOL) /OUT:$@ $^ 
 
-winTestPlatform.obj: $(TEST)/winTestPlatform.cpp
-	$(COMPILER) $(CXXFLAGS) /I $(INCLUDE) /c $< /O $@
-
-testMain.obj: $(TEST)/testMain.cpp
-	$(COMPILER) $(CXXFLAGS) /I $(INCLUDE) /c $< /O $@
-
-api-atom-cpp.lib:
-	make -f WineBuild.make
+$(lib_targets): %.obj : $(SOURCE)/%.cpp
+	$(COMPILER) $(CXXFLAGS) /c $< /Fo$@ /I $(INCLUDE)
 
 clean: 
-	rm -rf *.test
-	rm -rf *.lib
-	rm -rf *.exe
 	rm -rf *.obj
-	rm -rf *.ilk
-	rm -rf *.pdb
+	rm -rf *.lib

@@ -1,0 +1,26 @@
+#!/bin/sh
+
+export lib_targets="\
+	endian.obj inputStream.obj outputStream.obj\
+	bufferInputStream.obj bufferOutputStream.obj\
+	packetCall.obj packetReturn.obj packetException.obj\
+	stringio.obj apiException.obj fileStream.obj\
+	winThread.obj winSemaphore.obj winPlatform.obj\
+	apiObject.obj apiTransaction.obj apiHost.obj\
+	defaultRegistry.obj defaultProtocol.obj\
+	streamConnection.obj pipeStream.obj\
+"
+
+export test_targets="\
+	mechTest.test endianTest.test bufferTest.test\
+	packetTest.test variantTest.test fileTest.test\
+	threadTest.test semaphoreTest.test pipeTest.test\
+	transactionTest.test protocolTest.test\
+	singleConnTest.test apiHostTest.test\
+"
+
+export MAKEFILE=$0
+
+# So you can specify the make file then the target to make
+# directly.
+make -f $1 $2

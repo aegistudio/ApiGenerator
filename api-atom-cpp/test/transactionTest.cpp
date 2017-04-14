@@ -66,7 +66,7 @@ void test() throw (int) {
 
 	try {
 		exceptTransaction.call();
-		assert(false, "No exception comes.", 1);
+		assertClause(false, "No exception comes.", 1);
 	}
 	catch(api::ApiException e) {
 		std::cout << "[INFO] Get exception message: "

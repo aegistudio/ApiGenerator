@@ -12,3 +12,5 @@ set(CMAKE_CXX_FLAGS "-std=c99 -g")
 
 include_directories(include)
 add_subdirectory(src bin)
+
+

@@ -8,7 +8,7 @@ void test() throw (int) {
 	int i;	const int count = 1024;
 
 	FILE* writeBuffer = fopen(name, "w");
-	assert(writeBuffer != NULL, errorMsg, 1);
+	assertClause(writeBuffer != NULL, errorMsg, 1);
 
 	api::FileOutputStream outputStream(writeBuffer);
 
@@ -19,7 +19,7 @@ void test() throw (int) {
 	fclose(writeBuffer);
 
 	FILE* readBuffer = fopen(name, "r");
-	assert(readBuffer != NULL, errorMsg, 1);
+	assertClause(readBuffer != NULL, errorMsg, 1);
 
 	api::FileInputStream inputStream(readBuffer);
 
