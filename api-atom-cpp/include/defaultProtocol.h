@@ -9,6 +9,7 @@
 
 #include "protocol.h"
 #include "apiPacket.h"
+#include <exceptional>
 
 namespace api {
 
@@ -19,11 +20,10 @@ public:
 
 	virtual ~DefaultProtocol() {}
 
-	virtual Packet* receive(InputStream&)
-		throw (ApiException);
+	virtual exceptional<Packet*> receive(InputStream&);
 
-	virtual void transfer(Packet*, OutputStream&)
-		throw (ApiException);
+	virtual exceptional<void*> transfer(
+		Packet*, OutputStream&);
 };
 
 };

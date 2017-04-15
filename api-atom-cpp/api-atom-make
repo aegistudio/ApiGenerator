@@ -15,8 +15,8 @@ export test_targets="\
 	mechTest.test endianTest.test bufferTest.test\
 	packetTest.test variantTest.test fileTest.test\
 	threadTest.test semaphoreTest.test pipeTest.test\
-	transactionTest.test protocolTest.test\
-	singleConnTest.test apiHostTest.test\
+	exceptionalTest.test transactionTest.test\
+	protocolTest.test singleConnTest.test apiHostTest.test\
 "
 
 export MAKEFILE=$0

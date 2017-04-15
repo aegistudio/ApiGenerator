@@ -9,6 +9,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <exceptional>
 
 #include "stream.h"
 #include "apiObject.h"
@@ -18,9 +19,11 @@ namespace api {
 
 class ApiLocal : public ApiObject {
 public:
-	virtual void invoke(int32_t callId, 
-		InputStream& request, OutputStream& response) 
-		throw (ApiException) {}
+	virtual exceptional<void*> invoke(int32_t callId, 
+		InputStream& request, OutputStream& response) {
+
+		throwException("No call declared!");
+	}
 
 	virtual bool callable() { return true; }
 };

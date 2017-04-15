@@ -1,0 +1,59 @@
+/**
+ * EXCEPTIONAL - Exceptional Monad
+ *
+ * For returning result with possible exception.
+ * When invoke some routine with exceptional 
+ * return value, you ought to check whether there's
+ * some exception first, then decide whether to
+ * collapse the stack or just handle the exception.
+ *
+ * When you want to return a result barely, just
+ * return the result and this class will cast the
+ * result for you. Otherwise when you want to use
+ * the exception, you could either call the 
+ * throwException function or invoke the explicit 
+ * constructor.
+ */
+
+#pragma once
+
+#include "apiException.h"
+#include <string>
+
+namespace api {
+
+template<typename T>
+class exceptional {
+public:
+	const bool abnormal;
+	const ApiException exception;
+	const T value;
+
+	exceptional(T data): 
+		value(data),
+		abnormal(false) {}
+	
+	exceptional(ApiException _exception, T data = 0):
+		exception(_exception), 
+		value(data),
+		abnormal(true) {}
+};
+
+#define throwException(message)\
+	return ApiException(message);
+
+#define checkException(id)\
+	if(id.abnormal) return id.exception;
+
+#define tryAssign(T, target, id, expression) {\
+	api::exceptional< T > id##_except = (expression);\
+	checkException(id##_except);\
+	target = id##_except.value;\
+}
+
+#define tryDeclare(T, id, expression)\
+	api::exceptional< T > id##_except = (expression);\
+	checkException(id##_except);\
+	T id = id##_except.value;
+
+};

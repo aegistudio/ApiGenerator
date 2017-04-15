@@ -47,26 +47,23 @@ void DefaultRegistry::insert(PacketFactory* factory) {
 	}
 }
 
-Packet* DefaultRegistry::newPacket(int packetId) 
-	throw (ApiException) {
+exceptional<Packet*> DefaultRegistry::newPacket(int packetId) {
 	
 	PacketFactory* factory = registry[packetId];
 	if(factory) return factory -> newPacket();
 	else {
 		std::stringstream message;
 		message << "Packet #" << packetId << " does not exists.";
-		throw ApiException(message.str());
+		throwException(message.str());
 	}
 }
 
-int DefaultRegistry::lookPacket(Packet* packet) 
-	throw (ApiException) {
-
+exceptional<int> DefaultRegistry::lookPacket(Packet* packet) {
 	int result = packet -> id();
 	if(registry[result] == NULL) {
 		std::stringstream message;
 		message << "Packet #" << result << " does not exists.";
-		throw ApiException(message.str());
+		throwException(message.str());
 	}
 	return result;
 }

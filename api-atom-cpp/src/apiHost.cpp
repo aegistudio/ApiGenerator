@@ -57,19 +57,20 @@ void ApiHost::demarshal(ApiObject* apiObject) {
 	}
 }
 
-ApiObject* ApiHost::search(int32_t value) throw (ApiException) {
+exceptional<ApiObject*> ApiHost::search(int32_t value) {
 	if(value == 0) return this;
 	if(objects.count(value)) return objects[value];
 	else {
 		std::stringstream messageBuilder;
 		messageBuilder << "Api Object #" << value + " does not exist.";
-		throw ApiException(messageBuilder.str());
+		throwException(messageBuilder.str());
 	}
 }
 
 // ------ Call / Return Management --------------------
-variant<int8_t> ApiHost::call(int32_t calleeId, int32_t callId, 
-	variant<int8_t>& callData) throw (ApiException) {
+exceptional< variant<int8_t> > ApiHost::call(
+	int32_t calleeId, int32_t callId, 
+	variant<int8_t>& callData) {
 
 	ApiTransaction callTransaction(platform.newSemaphore());
 
@@ -84,7 +85,7 @@ variant<int8_t> ApiHost::call(int32_t calleeId, int32_t callId,
 
 	// Wait for result, if an exception is generated,
 	// the call stack will be retraced.
-	callTransaction.call();
+	checkException(callTransaction.call());
 
 	// Notice: data owns the result data now.
 	variant<int8_t> data(
@@ -119,10 +120,18 @@ void ApiHost::handle(Packet* packet) {
 
 void ApiHost::handleCall(Packet* packet) {
 	PacketCall* packetCall = reinterpret_cast<PacketCall*>(packet);
-	try {
-		ApiObject* target = search(packetCall -> callee);
-		if(!(target -> callable()))
-			throw ApiException("Target not callable!");
+	exceptional<ApiObject*> callMonad = search(packetCall -> callee);
+	if(callMonad.abnormal) {
+		clientExcept(packetCall -> caller, callMonad.exception);
+		return;
+	}
+	else {
+		ApiObject* target = callMonad.value;
+		if(!(target -> callable())) {
+			clientExcept(packetCall -> caller, 
+				ApiException("Target not callable!"));
+			return;
+		}
 		else {
 			ApiLocal* callable = reinterpret_cast<ApiLocal*>(target);
 
@@ -142,54 +151,62 @@ void ApiHost::handleCall(Packet* packet) {
 			connection -> send(callResult);
 		}
 	}
-	catch(ApiException e) {
-		PacketException* callError = new PacketException;
-		callError -> caller = packetCall -> caller;
-		callError -> exception = e;
-		connection -> send(callError);
-	}
 }
 
 void ApiHost::handleReturn(Packet* packet) {
 	PacketReturn* packetReturn = reinterpret_cast<PacketReturn*>(packet);
-	try {
-		ApiObject* target = search(packetReturn -> caller);
-		if(target -> callable()) 
-			throw ApiException("Not a transaction.");
-		else {
-			ApiTransaction* transaction 
-				= reinterpret_cast<ApiTransaction*>(target);
-			transaction -> result(
-				packetReturn -> size, packetReturn -> result);
-		}
+
+	exceptional<ApiObject*> returnMonad = search(packetReturn -> caller);
+	if(returnMonad.abnormal) {
+		serverExcept(returnMonad.exception); return;
 	}
-	catch(ApiException e) {
-		generalExcept(e);
+
+	ApiObject* target = returnMonad.value;
+
+	if(target -> callable()) {
+		serverExcept(ApiException("Not a transaction."));
+		return;
+	}
+	else {
+		ApiTransaction* transaction 
+			= reinterpret_cast<ApiTransaction*>(target);
+		transaction -> result(
+			packetReturn -> size, packetReturn -> result);
 	}
 }
 
 void ApiHost::handleException(Packet* packet) {
 	PacketException* packetException = reinterpret_cast<PacketException*>(packet);
 	if(packetException -> caller == 0)
-		generalExcept(packetException -> exception);
+		serverExcept(packetException -> exception);
 	else {
-		try {
-			ApiObject* target = search(packetException -> caller);
-			if(target -> callable()) 
-				throw ApiException("Not a transaction.");
-			else {
-				ApiTransaction* transaction 
-					= reinterpret_cast<ApiTransaction*>(target);
-				transaction -> except(packetException -> exception);
-			}
+		exceptional<ApiObject*> exceptMonad 
+			= search(packetException -> caller);
+		if(exceptMonad.abnormal) {
+			serverExcept(exceptMonad.exception);
+			return;
 		}
-		catch(ApiException e) {
-			generalExcept(e);
+
+		ApiObject* target = exceptMonad.value;
+		if(target -> callable()) {
+			serverExcept(ApiException("Not a transaction."));
+			return;
 		}
+
+		ApiTransaction* transaction 
+			= reinterpret_cast<ApiTransaction*>(target);
+		transaction -> except(packetException -> exception);
 	}
 }
 
 #include <iostream>
-void ApiHost::generalExcept(ApiException e) {
+void ApiHost::serverExcept(ApiException e) {
 	std::cerr << e.message() << std::endl;
+}
+
+void ApiHost::clientExcept(int32_t caller, ApiException e) {
+	PacketException* callError = new PacketException;
+	callError -> caller = caller;
+	callError -> exception = e;
+	connection -> send(callError);
 }

@@ -23,7 +23,7 @@ public:
 
 	ApiException(const std::string&);
 
-	const std::string& message();
+	const std::string& message() const;
 };
 
 };

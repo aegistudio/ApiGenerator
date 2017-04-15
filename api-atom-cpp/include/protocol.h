@@ -12,6 +12,7 @@
 
 #include "apiException.h"
 #include "stream.h"
+#include <exceptional>
 
 namespace api {
 
@@ -24,11 +25,9 @@ public:
 	// This method would deliberately
 	// new an instance, and should be
 	// aware of potential memory leak.
-	virtual T* receive(InputStream&) 
-		throw (ApiException) = 0;
+	virtual exceptional< T* > receive(InputStream&) = 0;
 
-	virtual void transfer(T*, OutputStream&) 
-		throw (ApiException) = 0;
+	virtual exceptional<void*> transfer(T*, OutputStream&) = 0;
 };
 
 };

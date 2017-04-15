@@ -29,11 +29,10 @@ public:
 			T* data = monitorQueue.remove();
 			if(data == NULL) continue;
 
-			try {
+			exceptional<void*> transferMonad = 
 				protocol.transfer(data, outputStream);	
-			}
-			catch(ApiException e) {
-				writerHandler.handleError(data, e);
+			if(transferMonad.abnormal) {
+				writerHandler.handleError(data, transferMonad.exception);
 			}
 			delete data;
 		}

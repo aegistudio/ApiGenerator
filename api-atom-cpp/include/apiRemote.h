@@ -14,6 +14,7 @@
 
 #include "apiHost.h"
 #include "apiException.h"
+#include <exceptional>
 
 namespace api {
 
@@ -21,8 +22,8 @@ class ApiRemote {
 	ApiHost* host;
 	const int32_t handle;
 protected:
-	variant<int8_t> call(int32_t, variant<int8_t>) 
-		throw (ApiException);
+	exceptional< variant<int8_t> >
+		call(int32_t, variant<int8_t>);
 public:
 	ApiRemote(ApiHost*, int32_t);
 

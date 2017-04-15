@@ -35,7 +35,10 @@ void test() throw (int) {
 
 	platform.newThread(&valueFeed) -> detach();
 
-	valueTransaction.call();
+	api::exceptional<void*> valueCall = valueTransaction.call();
+	assertClause(!valueCall.abnormal,
+		"Should not be exception here.", 1);
+
 	int32_t size = valueTransaction.resultSize();
 	int8_t* data = valueTransaction.resultData();
 	api::BufferInputStream resultReader(size, data);
@@ -64,15 +67,11 @@ void test() throw (int) {
 
 	platform.newThread(&exceptFeed) -> detach();
 
-	try {
-		exceptTransaction.call();
-		assertClause(false, "No exception comes.", 1);
-	}
-	catch(api::ApiException e) {
-		std::cout << "[INFO] Get exception message: "
-			<< e.message() << std::endl;
-		assertEquals(exceptString, e.message());
-	}
+	api::exceptional<void*> exceptCall = exceptTransaction.call();
+	assertClause(exceptCall.abnormal, "No exception comes.", 2);
+	std::cout << "[INFO] Get exception message: "
+		<< exceptCall.exception.message() << std::endl;
+	assertEquals(exceptString, exceptCall.exception.message());
 
 	std::cout << "[INFO] Exception output works." << std::endl;
 }

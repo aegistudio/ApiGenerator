@@ -31,13 +31,16 @@ public:
 	void doTransfer(api::Protocol<api::Packet>& protocol, api::OutputStream& outputStream) {
 		int i; for(i = 0; i < times(); i ++) {
 			std::auto_ptr<api::Packet> current(transfer(i));
-			protocol.transfer(current.get(), outputStream);
+			api::exceptional<void*> transferMonad = protocol.transfer(current.get(), outputStream);
+			assertClause(!transferMonad.abnormal, "Error while sending.", 2);
 		}
 	}
 
 	void doVerify(api::Protocol<api::Packet>& protocol, api::InputStream& inputStream) {
 		int i; for(i = 0; i < times(); i ++) {
-			std::auto_ptr<api::Packet> current(protocol.receive(inputStream));
+			api::exceptional<api::Packet*> receiveMonad = protocol.receive(inputStream);
+			assertClause(!receiveMonad.abnormal, "Error while receiving.", 1);
+			std::auto_ptr<api::Packet> current(receiveMonad.value);
 			verify(current.get(), i);
 		}
 	}

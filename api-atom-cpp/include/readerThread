@@ -56,13 +56,13 @@ public:
 	virtual void run() {
 		// To stop it, you could only use api::Thread::kill()
 		while(1) {
-			try {
-				T* something = protocol.receive(inputStream);
+			exceptional<T*> someMonad = protocol.receive(inputStream);
+			if(someMonad.abnormal)
+				handler.handleError(someMonad.exception);
+			else {
+				T* something = someMonad.value;
 				platform.newThread(
 					new AsyncReadHandler<T>(handler, something), true) -> detach();
-			}
-			catch(ApiException e) {
-				handler.handleError(e);
 			}
 		}
 	}

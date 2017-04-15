@@ -14,6 +14,7 @@
 #include "apiObject.h"
 #include "apiException.h"
 #include "semaphore.h"
+#include <exceptional>
 #include <stdint.h>
 
 namespace api {
@@ -28,7 +29,7 @@ public:
 
 	virtual ~ApiTransaction();
 
-	virtual void call() throw (ApiException);
+	virtual exceptional<void*> call();
 
 	int32_t resultSize();
 

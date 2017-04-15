@@ -27,11 +27,9 @@ public:
 
 	void insert(PacketFactory*);
 
-	virtual Packet* newPacket(int packetid) 
-		throw (ApiException);
+	virtual exceptional<Packet*> newPacket(int packetid); 
 
-	virtual int lookPacket(Packet* packet) 
-		throw (ApiException);
+	virtual exceptional<int> lookPacket(Packet* packet);
 };
 
 };

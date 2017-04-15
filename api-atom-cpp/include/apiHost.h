@@ -19,6 +19,8 @@
 #include "connection.h"
 #include <apiVariant>
 
+#include <exceptional>
+
 namespace api {
 
 class ApiObject;
@@ -36,7 +38,9 @@ protected:
 
 	virtual void handleException(Packet*);
 
-	virtual void generalExcept(ApiException);
+	virtual void clientExcept(int32_t, ApiException);
+
+	virtual void serverExcept(ApiException);
 public:	
 	ApiHost(ConnectionFactory&, Platform&);
 
@@ -50,13 +54,10 @@ public:
 
 	void demarshal(ApiObject*);
 
-	ApiObject* search(int32_t) throw (ApiException);
+	exceptional<ApiObject*> search(int32_t);
 
-	variant<int8_t> call(int32_t, int32_t, variant<int8_t>&) 
-		throw (ApiException);
-
-	virtual void invoke(int32_t, InputStream&, OutputStream&) 
-		throw (ApiException) {}
+	exceptional< variant<int8_t> > 
+		call(int32_t, int32_t, variant<int8_t>&);
 	
 	virtual void handle(Packet* packet);
 };

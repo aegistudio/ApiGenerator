@@ -6,19 +6,22 @@ using namespace api;
 DefaultProtocol::DefaultProtocol(PacketRegistry& _registry):
 	registry(_registry) {}
 
-Packet* DefaultProtocol::receive(InputStream& inputStream) 
-	throw (ApiException) {
-
+exceptional<Packet*> DefaultProtocol::receive(InputStream& inputStream) {
 	int8_t packetId = inputStream.readByte();
-	Packet* packet = registry.newPacket(packetId);
+
+	tryDeclare(Packet*, packet, 
+		registry.newPacket(packetId));
 	packet -> read(inputStream);
 	return packet;
 }
 
-void DefaultProtocol::transfer(Packet* packet, 
-	OutputStream& outputStream) throw (ApiException) {
+exceptional<void*> DefaultProtocol::transfer(Packet* packet, 
+	OutputStream& outputStream) {
 
-	outputStream.writeByte(
-		(int8_t)registry.lookPacket(packet));
+	tryDeclare(int, packetId, 
+		registry.lookPacket(packet));
+
+	outputStream.writeByte(packetId);
 	packet -> write(outputStream);
+	return NULL;
 }

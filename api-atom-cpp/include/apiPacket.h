@@ -12,6 +12,7 @@
 #pragma once
 
 #include "apiException.h"
+#include <exceptional>
 #include "stream.h"
 
 namespace api {
@@ -35,9 +36,9 @@ class PacketRegistry {
 public:
 	virtual ~PacketRegistry() {}
 
-	virtual Packet* newPacket(int packetId) throw (ApiException) = 0;
+	virtual exceptional<Packet*> newPacket(int packetId) = 0;
 
-	virtual int lookPacket(Packet* packet) throw (ApiException) = 0;
+	virtual exceptional<int> lookPacket(Packet* packet) = 0;
 };
 
 };

@@ -27,9 +27,10 @@ void ApiTransaction::except(ApiException apiExcept) {
 	semaphore -> verhogen();
 }
 
-void ApiTransaction::call() throw (ApiException) {
+exceptional<void*> ApiTransaction::call() {
 	semaphore -> proberen();
-	if(abnormal) throw ApiException(exception);
+	if(abnormal) return ApiException(exception);
+	else return NULL;
 }
 
 int32_t ApiTransaction::resultSize() {
