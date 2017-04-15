@@ -1,4 +1,4 @@
-/**
+/*
  * EXCEPTIONAL - Exceptional Monad
  *
  * For returning result with possible exception.
@@ -13,6 +13,14 @@
  * the exception, you could either call the 
  * throwException function or invoke the explicit 
  * constructor.
+ */
+
+/**
+ * @@@@@@@@@@@@@@@@ WARNING @@@@@@@@@@@@@@@@@@@@@
+ * When the return type is void, the generated
+ * type would be _EX(void*), which means you should
+ * return NULL or it may cause memory corruption!
+ * @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
  */
 
 #pragma once

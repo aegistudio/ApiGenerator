@@ -24,11 +24,23 @@ public:
 		tryDeclare(api::variant<int8_t>, callResult,
 			this -> call(0, 0, callData));
 
-		std::cout << "[INFO] Client call finishes." << std::endl;
-
 		api::BufferInputStream input(
 			callResult.length, *callResult);
 		return input.readFloat();
+	}
+
+	_EX(double) notExistMethod() {
+		api::BufferOutputStream output;
+
+		api::variant<int8_t> callData(
+			output.size(), output.clone());
+
+		tryDeclare(api::variant<int8_t>, callResult,
+			this -> call(0, 100, callData));
+
+		api::BufferInputStream input(
+			callResult.length, *callResult);
+		return input.readDouble();
 	}
 };
 
@@ -40,7 +52,7 @@ public:
 	_EX(float) threeSum(float _a1, float _a2, float _a3) 
 		throw (api::ApiException) {
 		// Deliberately wait some time.
-		sleep(300L);
+		//sleep(300L);
 
 		return _a1 + _a2 + _a3;
 	}
@@ -69,11 +81,11 @@ public:
 
 		switch(callId) {
 			case 0:
-				invokeThreeSum(inputStream, outputStream);
-				return NULL;
+				return invokeThreeSum(inputStream, outputStream);
 			break;
 			default:
-				return NULL;
+				return ApiLocal::invoke(callId, 
+					inputStream, outputStream);
 		}
 	}
 };
@@ -112,6 +124,10 @@ void test() throw (int) {
 	assertEquals(server.threeSum(400.0f, 3.0f, 2.0f).value,
 		client.threeSum(400.0f, 3.0f, 2.0f).value);
 	std::cout << "[INFO] Result 4 correct." << std::endl;
+
+	_EX(double) result5 = client.notExistMethod();
+	assertClause(result5.abnormal, "Result 5 should generate exception!");
+	std::cout << "[INFO] Result 5 correct." << std::endl;
 
 	std::cout << "[INFO] Finished pseudo apiHost test." << std::endl;
 

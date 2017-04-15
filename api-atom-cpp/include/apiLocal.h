@@ -15,6 +15,8 @@
 #include "apiObject.h"
 #include "apiException.h"
 
+#include <sstream>
+
 namespace api {
 
 class ApiLocal : public ApiObject {
@@ -22,7 +24,9 @@ public:
 	virtual _EX(void*) invoke(int32_t callId, 
 		InputStream& request, OutputStream& response) {
 
-		throwException("No call declared!");
+		std::stringstream message;
+		message << "Call #" << callId << " is not declared!";
+		throwException(message.str());
 	}
 
 	virtual bool callable() { return true; }

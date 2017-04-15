@@ -85,7 +85,8 @@ _EX(variant<int8_t>) ApiHost::call(
 
 	// Wait for result, if an exception is generated,
 	// the call stack will be retraced.
-	checkException(callTransaction.call());
+	_EX(void*) callStatus = callTransaction.call();
+	checkException(callStatus);
 
 	// Notice: data owns the result data now.
 	variant<int8_t> data(
@@ -141,14 +142,19 @@ void ApiHost::handleCall(Packet* packet) {
 
 			BufferOutputStream outputStream;
 
-			callable -> invoke(packetCall -> call, 
-				inputStream, outputStream);
+			_EX(void*) resultMonad = callable -> invoke(
+				packetCall -> call, inputStream, outputStream);
 
-			PacketReturn* callResult = new PacketReturn;
-			callResult -> caller = packetCall -> caller;
-			callResult -> size = outputStream.size();
-			callResult -> result = outputStream.clone();
-			connection -> send(callResult);
+			if(resultMonad.abnormal) 
+				clientExcept(packetCall -> caller, 
+					resultMonad.exception);
+			else {
+				PacketReturn* callResult = new PacketReturn;
+				callResult -> caller = packetCall -> caller;
+				callResult -> size = outputStream.size();
+				callResult -> result = outputStream.clone();
+				connection -> send(callResult);
+			}
 		}
 	}
 }
