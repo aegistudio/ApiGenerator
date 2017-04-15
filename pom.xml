@@ -27,6 +27,7 @@
 		<module>api-javagen</module>
 		<module>api-atom-java</module>
 		<module>api-main</module>
+		<module>api-cppgen</module>
 	</modules>
 
 	<dependencyManagement><dependencies>
