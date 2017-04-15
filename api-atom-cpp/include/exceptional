@@ -39,6 +39,8 @@ public:
 		abnormal(true) {}
 };
 
+#define _EX(T) api::exceptional< T >
+
 #define throwException(message)\
 	return ApiException(message);
 
@@ -46,14 +48,13 @@ public:
 	if(id.abnormal) return id.exception;
 
 #define tryAssign(T, target, id, expression) {\
-	api::exceptional< T > id##_except = (expression);\
+	_EX(T) id##_except = (expression);\
 	checkException(id##_except);\
 	target = id##_except.value;\
 }
 
 #define tryDeclare(T, id, expression)\
-	api::exceptional< T > id##_except = (expression);\
+	_EX(T) id##_except = (expression);\
 	checkException(id##_except);\
 	T id = id##_except.value;
-
 };

@@ -20,10 +20,9 @@ public:
 
 	virtual ~DefaultProtocol() {}
 
-	virtual exceptional<Packet*> receive(InputStream&);
+	virtual _EX(Packet*) receive(InputStream&);
 
-	virtual exceptional<void*> transfer(
-		Packet*, OutputStream&);
+	virtual _EX(void*) transfer(Packet*, OutputStream&);
 };
 
 };

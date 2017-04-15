@@ -47,7 +47,7 @@ void DefaultRegistry::insert(PacketFactory* factory) {
 	}
 }
 
-exceptional<Packet*> DefaultRegistry::newPacket(int packetId) {
+_EX(Packet*) DefaultRegistry::newPacket(int packetId) {
 	
 	PacketFactory* factory = registry[packetId];
 	if(factory) return factory -> newPacket();
@@ -58,7 +58,7 @@ exceptional<Packet*> DefaultRegistry::newPacket(int packetId) {
 	}
 }
 
-exceptional<int> DefaultRegistry::lookPacket(Packet* packet) {
+_EX(int) DefaultRegistry::lookPacket(Packet* packet) {
 	int result = packet -> id();
 	if(registry[result] == NULL) {
 		std::stringstream message;

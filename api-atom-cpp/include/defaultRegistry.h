@@ -27,9 +27,9 @@ public:
 
 	void insert(PacketFactory*);
 
-	virtual exceptional<Packet*> newPacket(int packetid); 
+	virtual _EX(Packet*) newPacket(int packetid); 
 
-	virtual exceptional<int> lookPacket(Packet* packet);
+	virtual _EX(int) lookPacket(Packet* packet);
 };
 
 };

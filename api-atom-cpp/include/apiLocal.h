@@ -19,7 +19,7 @@ namespace api {
 
 class ApiLocal : public ApiObject {
 public:
-	virtual exceptional<void*> invoke(int32_t callId, 
+	virtual _EX(void*) invoke(int32_t callId, 
 		InputStream& request, OutputStream& response) {
 
 		throwException("No call declared!");

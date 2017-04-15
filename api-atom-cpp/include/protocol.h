@@ -25,9 +25,9 @@ public:
 	// This method would deliberately
 	// new an instance, and should be
 	// aware of potential memory leak.
-	virtual exceptional< T* > receive(InputStream&) = 0;
+	virtual _EX(T*) receive(InputStream&) = 0;
 
-	virtual exceptional<void*> transfer(T*, OutputStream&) = 0;
+	virtual _EX(void*) transfer(T*, OutputStream&) = 0;
 };
 
 };

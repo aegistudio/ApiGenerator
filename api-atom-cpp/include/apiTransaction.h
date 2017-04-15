@@ -29,7 +29,7 @@ public:
 
 	virtual ~ApiTransaction();
 
-	virtual exceptional<void*> call();
+	virtual _EX(void*) call();
 
 	int32_t resultSize();
 

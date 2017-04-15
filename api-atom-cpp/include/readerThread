@@ -56,7 +56,7 @@ public:
 	virtual void run() {
 		// To stop it, you could only use api::Thread::kill()
 		while(1) {
-			exceptional<T*> someMonad = protocol.receive(inputStream);
+			_EX(T*) someMonad = protocol.receive(inputStream);
 			if(someMonad.abnormal)
 				handler.handleError(someMonad.exception);
 			else {

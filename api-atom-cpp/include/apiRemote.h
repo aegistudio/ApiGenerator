@@ -22,7 +22,7 @@ class ApiRemote {
 	ApiHost* host;
 	const int32_t handle;
 protected:
-	exceptional< variant<int8_t> >
+	_EX(variant<int8_t>) 
 		call(int32_t, variant<int8_t>);
 public:
 	ApiRemote(ApiHost*, int32_t);

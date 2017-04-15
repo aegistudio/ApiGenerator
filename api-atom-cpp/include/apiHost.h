@@ -54,10 +54,10 @@ public:
 
 	void demarshal(ApiObject*);
 
-	exceptional<ApiObject*> search(int32_t);
+	_EX(ApiObject*) search(int32_t);
 
-	exceptional< variant<int8_t> > 
-		call(int32_t, int32_t, variant<int8_t>&);
+	_EX(variant<int8_t>) call(
+		int32_t, int32_t, variant<int8_t>&);
 	
 	virtual void handle(Packet* packet);
 };

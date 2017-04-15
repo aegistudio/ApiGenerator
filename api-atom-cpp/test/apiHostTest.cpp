@@ -11,7 +11,7 @@ public:
 	ApiClient(api::ConnectionFactory& factory):
 		api::ApiHost(factory, getPlatform()) {}
 
-	api::exceptional<float> threeSum(float _a1, float _a2, float _a3) {
+	_EX(float) threeSum(float _a1, float _a2, float _a3) {
 
 		api::BufferOutputStream output;
 		output.writeFloat(_a1);
@@ -37,7 +37,7 @@ public:
 	ApiServer(api::ConnectionFactory& factory):
 		api::ApiHost(factory, getPlatform()) {}
 	
-	api::exceptional<float> threeSum(float _a1, float _a2, float _a3) 
+	_EX(float) threeSum(float _a1, float _a2, float _a3) 
 		throw (api::ApiException) {
 		// Deliberately wait some time.
 		sleep(300L);
@@ -46,8 +46,8 @@ public:
 	}
 
 private:
-	api::exceptional<void*> invokeThreeSum(api::InputStream& inputStream, 
-		api::OutputStream& outputStream) throw (api::ApiException) {
+	_EX(void*) invokeThreeSum(api::InputStream& inputStream, 
+		api::OutputStream& outputStream) {
 
 		float _a1 = inputStream.readFloat();
 		float _a2 = inputStream.readFloat();
@@ -63,7 +63,8 @@ private:
 		return NULL;
 	}
 public:
-	virtual api::exceptional<void*> invoke(int32_t callId, api::InputStream& inputStream, 
+	virtual _EX(void*) invoke(int32_t callId, 
+		api::InputStream& inputStream, 
 		api::OutputStream& outputStream) {
 
 		switch(callId) {

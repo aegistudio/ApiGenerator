@@ -27,7 +27,7 @@ void ApiTransaction::except(ApiException apiExcept) {
 	semaphore -> verhogen();
 }
 
-exceptional<void*> ApiTransaction::call() {
+_EX(void*) ApiTransaction::call() {
 	semaphore -> proberen();
 	if(abnormal) return ApiException(exception);
 	else return NULL;

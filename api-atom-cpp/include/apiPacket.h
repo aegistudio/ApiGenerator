@@ -36,9 +36,9 @@ class PacketRegistry {
 public:
 	virtual ~PacketRegistry() {}
 
-	virtual exceptional<Packet*> newPacket(int packetId) = 0;
+	virtual _EX(Packet*) newPacket(int packetId) = 0;
 
-	virtual exceptional<int> lookPacket(Packet* packet) = 0;
+	virtual _EX(int) lookPacket(Packet* packet) = 0;
 };
 
 };

@@ -57,7 +57,7 @@ void ApiHost::demarshal(ApiObject* apiObject) {
 	}
 }
 
-exceptional<ApiObject*> ApiHost::search(int32_t value) {
+_EX(ApiObject*) ApiHost::search(int32_t value) {
 	if(value == 0) return this;
 	if(objects.count(value)) return objects[value];
 	else {
@@ -68,7 +68,7 @@ exceptional<ApiObject*> ApiHost::search(int32_t value) {
 }
 
 // ------ Call / Return Management --------------------
-exceptional< variant<int8_t> > ApiHost::call(
+_EX(variant<int8_t>) ApiHost::call(
 	int32_t calleeId, int32_t callId, 
 	variant<int8_t>& callData) {
 
@@ -120,7 +120,7 @@ void ApiHost::handle(Packet* packet) {
 
 void ApiHost::handleCall(Packet* packet) {
 	PacketCall* packetCall = reinterpret_cast<PacketCall*>(packet);
-	exceptional<ApiObject*> callMonad = search(packetCall -> callee);
+	_EX(ApiObject*) callMonad = search(packetCall -> callee);
 	if(callMonad.abnormal) {
 		clientExcept(packetCall -> caller, callMonad.exception);
 		return;
@@ -156,7 +156,7 @@ void ApiHost::handleCall(Packet* packet) {
 void ApiHost::handleReturn(Packet* packet) {
 	PacketReturn* packetReturn = reinterpret_cast<PacketReturn*>(packet);
 
-	exceptional<ApiObject*> returnMonad = search(packetReturn -> caller);
+	_EX(ApiObject*) returnMonad = search(packetReturn -> caller);
 	if(returnMonad.abnormal) {
 		serverExcept(returnMonad.exception); return;
 	}
@@ -180,7 +180,7 @@ void ApiHost::handleException(Packet* packet) {
 	if(packetException -> caller == 0)
 		serverExcept(packetException -> exception);
 	else {
-		exceptional<ApiObject*> exceptMonad 
+		_EX(ApiObject*) exceptMonad 
 			= search(packetException -> caller);
 		if(exceptMonad.abnormal) {
 			serverExcept(exceptMonad.exception);

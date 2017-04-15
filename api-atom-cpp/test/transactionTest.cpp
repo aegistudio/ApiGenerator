@@ -35,7 +35,7 @@ void test() throw (int) {
 
 	platform.newThread(&valueFeed) -> detach();
 
-	api::exceptional<void*> valueCall = valueTransaction.call();
+	_EX(void*) valueCall = valueTransaction.call();
 	assertClause(!valueCall.abnormal,
 		"Should not be exception here.", 1);
 
@@ -67,7 +67,7 @@ void test() throw (int) {
 
 	platform.newThread(&exceptFeed) -> detach();
 
-	api::exceptional<void*> exceptCall = exceptTransaction.call();
+	_EX(void*) exceptCall = exceptTransaction.call();
 	assertClause(exceptCall.abnormal, "No exception comes.", 2);
 	std::cout << "[INFO] Get exception message: "
 		<< exceptCall.exception.message() << std::endl;

@@ -16,7 +16,7 @@ ApiRemote::ApiRemote(const ApiRemote& _copy):
 
 }
 
-exceptional< variant<int8_t> > ApiRemote::call(
+_EX(variant<int8_t>) ApiRemote::call(
 	int32_t call, variant<int8_t> parameter) {
 
 	return host -> call(handle, call, parameter);

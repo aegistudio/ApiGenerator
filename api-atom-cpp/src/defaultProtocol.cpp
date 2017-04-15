@@ -6,7 +6,7 @@ using namespace api;
 DefaultProtocol::DefaultProtocol(PacketRegistry& _registry):
 	registry(_registry) {}
 
-exceptional<Packet*> DefaultProtocol::receive(InputStream& inputStream) {
+_EX(Packet*) DefaultProtocol::receive(InputStream& inputStream) {
 	int8_t packetId = inputStream.readByte();
 
 	tryDeclare(Packet*, packet, 
@@ -15,7 +15,7 @@ exceptional<Packet*> DefaultProtocol::receive(InputStream& inputStream) {
 	return packet;
 }
 
-exceptional<void*> DefaultProtocol::transfer(Packet* packet, 
+_EX(void*) DefaultProtocol::transfer(Packet* packet, 
 	OutputStream& outputStream) {
 
 	tryDeclare(int, packetId, 
