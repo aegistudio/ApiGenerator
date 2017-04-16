@@ -16,10 +16,10 @@ public class CppWriteSerializer extends ComposeSerializer {
 		
 		// api::String::write(someString, inputStream)
 		compositeFilter(Filter.PRIMITIVE(Primitive.STRING), 
-				"api::String::write(<id>, <stream>)");
+				"api::String::write(<id>, <stream>);");
 		
 		// some::namespace::SomeObject::write(object, apiHost, inputStream)
-		String composeWriter = "<typeSingle>::write(<id>, <host>, <stream>)";
+		String composeWriter = "<class>::write(<id>, <host>, <stream>);";
 		compositeFilter(Filter.INTERFACE, composeWriter);
 		compositeFilter(Filter.CALLBACK, composeWriter);
 		compositeFilter(Filter.VALUE, composeWriter);
@@ -27,7 +27,7 @@ public class CppWriteSerializer extends ComposeSerializer {
 	
 	private void primitiveFilter(Primitive primitive, String which) {
 		Filter filter = Filter.PRIMITIVE(primitive);
-		this.compositeFilter(filter, "<stream>.write<which>(<id>)"
+		this.compositeFilter(filter, "<stream>.write<which>(<id>);"
 				.replace("<which>", which));
 	}
 	
@@ -35,11 +35,12 @@ public class CppWriteSerializer extends ComposeSerializer {
 		super.add(Filter.SINGLE(filter), serializer);
 		
 		String componentSerial = serializer.replace(
-				"<id>", "<id>[i_<id>]");
+				"<id>", "<id>[i]");
 		
 		super.add(Filter.VARIANT(filter), (
-				"<stream>.writeInt(<id>.length);\n" +
-				"int32_t i_<id>; for(i_<id> = 0; i < <id>.length; i ++)\n" + 
-				"\t" + componentSerial + ";"));
+				"<stream>.writeInt(<id>.length); {\n" +
+				"\tint32_t i; for(i = 0; i < <id>.length; i ++)\n" + 
+				"\t" + componentSerial + "\n" +
+				"}"));
 	}
 }

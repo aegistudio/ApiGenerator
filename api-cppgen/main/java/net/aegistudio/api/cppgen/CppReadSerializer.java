@@ -37,9 +37,10 @@ public class CppReadSerializer extends ComposeSerializer {
 		super.add(Filter.SINGLE(filter),
 				"<id> = " + serializer + ";");
 		super.add(Filter.VARIANT(filter), 
-				"<id> = api::variant<<typeSingle>>(<stream>.readInt());\n" +
-				"int32_t i_<id>; for(i_<id> = 0; i < <id>.length; i ++)\n" + 
-				"\t<id>[i_<id>] = " + serializer + ";");
+				"<id> = api::variant<<typeSingle>>(<stream>.readInt()); {\n" +
+				"\tint32_t i; for(i = 0; i < <id>.length; i ++)\n" + 
+				"\t<id>[i] = " + serializer + ";\n" +
+				"}");
 	}
 	
 	private void exceptFilter(Filter filter) {
@@ -47,9 +48,10 @@ public class CppReadSerializer extends ComposeSerializer {
 				"tryAssign(<typeSingle>, <id>, <id>, \n" + 
 				"\t<class>::read(<host>, <stream>));");
 		super.add(Filter.SINGLE(filter),
-				  "<id> = <type>(<stream>.readInt());\n"
-				+ "int32_t i_<id>; for(i_<id> = 0; i < <id>.length; i ++)\n"
-				+ "\ttryAssign(<typeSingle>, <id>[i_<id>], <id>,\n"
-				+ "\t\t<class>::read(<host>, <stream>));");
+				  "<id> = <type>(<stream>.readInt()); {\n"
+				+ "\tint32_t i; for(i = 0; i < <id>.length; i ++)\n"
+				+ "\ttryAssign(<typeSingle>, <id>[i], except,\n"
+				+ "\t\t<class>::read(<host>, <stream>));\n"
+				+ "}");
 	}
 }

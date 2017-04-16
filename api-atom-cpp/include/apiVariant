@@ -10,17 +10,19 @@
  */
 #pragma once
 
+#include <stddef.h>
+
 namespace api {
 
 template<typename T>
 class variant {
 	T* data;
 public:
-	const int length;
+	int length;
 
 	variant(int size):
-		length(size), data(new T[size])
-		{}
+		length(size), data(
+			size > 0? new T[size] : NULL) {}
 
 	// @@@ Memory Leak Warning @@@
 	// Invocation to this method will transfer

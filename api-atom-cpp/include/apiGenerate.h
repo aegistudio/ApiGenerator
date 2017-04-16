@@ -13,7 +13,7 @@
 #pragma once
 
 // Basic type templating.
-#include <variant>
+#include <apiVariant>
 #include <exceptional>
 
 // IO related modules that might be used.
