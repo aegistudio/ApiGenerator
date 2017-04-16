@@ -10,7 +10,7 @@ api::variant<int> copyInteger(int size) {
 }
 
 void verifyInteger(int expectedSize, api::variant<int>& buffer) {
-	assertEquals(expectedSize, buffer.length);
+	assertEquals(expectedSize, buffer.length());
 	int* innerBuffer = *buffer;
 	int i; for(i = 0; i < expectedSize; i ++) {
 		assertEquals(i, buffer[i]);
@@ -34,7 +34,7 @@ api::variant<TestValueType> copyValueType(int size) {
 }
 
 void verifyValueType(int expectedSize, api::variant<TestValueType>& buffer) {
-	assertEquals(expectedSize, buffer.length);
+	assertEquals(expectedSize, buffer.length());
 	int i; for(i = 0; i < expectedSize; i ++) {
 		assertEquals(i, buffer[i].integerValue);
 		assertEquals((double)i, buffer[i].doubleValue);

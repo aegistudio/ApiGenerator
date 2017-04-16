@@ -1,5 +1,5 @@
 /**
- * APIVARIANT - variant length container.
+ * APIVARIANT - variant _length container.
  *
  * A variant container whose size is determined
  * at the very beginning but its content could
@@ -17,11 +17,14 @@ namespace api {
 template<typename T>
 class variant {
 	T* data;
+	int _length;
 public:
-	int length;
+	inline int length() const {
+		return _length;
+	}
 
 	variant(int size):
-		length(size), data(
+		_length(size), data(
 			size > 0? new T[size] : NULL) {}
 
 	// @@@ Memory Leak Warning @@@
@@ -30,27 +33,28 @@ public:
 	// and may cause double free if manage it
 	// else where.
 	variant(int size, T* theData):
-		length(size), data(theData)
+		_length(size), data(theData)
 		{}
 
 	variant(const variant<T>& copy):
-		length(copy.length),
-		data(new T[copy.length]) {
+		_length(copy._length),
+		data(copy._length > 0? 
+			new T[copy._length] : NULL) {
 
 		if(data) {
 			int index = 0;
-			for(; index < length; index ++)
+			for(; index < _length; index ++)
 				data[index] = copy.data[index];
 		}
 	}
 
 	virtual ~variant() {
-		if(length > 0 && data) 
+		if(_length > 0 && data) 
 			delete[] data;
 	}
 
 	// Retrive the data buffer of this container.
-	T* operator*() {
+	inline T* operator*() {
 		return data;
 	}
 
@@ -59,17 +63,17 @@ public:
 	// of this object, and current object will no
 	// longer own this array. So target owner should
 	// handle memory correctly.
-	T* transfer() {
+	inline T* transfer() {
 		T* result = data;
 		data = NULL;
 		return result;
 	}
 	
-	T& operator[](int index) {
+	inline T& operator[](int index) {
 		return data[index];
 	}
 
-	const T& operator[](int index) const {
+	inline const T& operator[](int index) const {
 		return data[index];
 	}
 };

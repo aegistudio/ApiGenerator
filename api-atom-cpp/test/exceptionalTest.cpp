@@ -20,7 +20,7 @@ _EX(variant<int>) countDown(int someValue) {
 	tryDeclare(int, value, nonNegativeInt(someValue));
 
 	variant<int> result(value);
-	int i; for(i = 0; i < result.length; i ++) 
+	int i; for(i = 0; i < result.length(); i ++) 
 		tryAssign(int, result[i], result,
 			nonNegativeInt(value - i));
 	return result;
@@ -44,7 +44,7 @@ void test() throw (int) {
 	_EX(variant<int>) test5 = countDown(40);
 	assertClause(!test5.abnormal, "No exception this case.");
 	const variant<int>& test5List = test5.value;
-	assertEquals(test5List.length, 40);
-	int i; for(i = 0; i < test5List.length; i ++)
-		assertEquals(test5List.length - i, test5List[i]);
+	assertEquals(test5List.length(), 40);
+	int i; for(i = 0; i < test5List.length(); i ++)
+		assertEquals(test5List.length() - i, test5List[i]);
 }

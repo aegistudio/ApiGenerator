@@ -25,7 +25,7 @@ public:
 			this -> call(0, 0, callData));
 
 		api::BufferInputStream input(
-			callResult.length, *callResult);
+			callResult.length(), *callResult);
 		return input.readFloat();
 	}
 
@@ -39,7 +39,7 @@ public:
 			this -> call(0, 100, callData));
 
 		api::BufferInputStream input(
-			callResult.length, *callResult);
+			callResult.length(), *callResult);
 		return input.readDouble();
 	}
 };

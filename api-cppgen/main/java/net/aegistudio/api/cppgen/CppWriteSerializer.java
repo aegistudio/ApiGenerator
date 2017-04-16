@@ -38,8 +38,8 @@ public class CppWriteSerializer extends ComposeSerializer {
 				"<id>", "<id>[i]");
 		
 		super.add(Filter.VARIANT(filter), (
-				"<stream>.writeInt(<id>.length); {\n" +
-				"\tint32_t i; for(i = 0; i < <id>.length; i ++)\n" + 
+				"<stream>.writeInt(<id>.length()); {\n" +
+				"\tint32_t i; for(i = 0; i < <id>.length(); i ++)\n" + 
 				"\t" + componentSerial + "\n" +
 				"}"));
 	}

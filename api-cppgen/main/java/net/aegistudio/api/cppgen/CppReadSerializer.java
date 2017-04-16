@@ -38,7 +38,7 @@ public class CppReadSerializer extends ComposeSerializer {
 				"<id> = " + serializer + ";");
 		super.add(Filter.VARIANT(filter), 
 				"<id> = api::variant<<typeSingle>>(<stream>.readInt()); {\n" +
-				"\tint32_t i; for(i = 0; i < <id>.length; i ++)\n" + 
+				"\tint32_t i; for(i = 0; i < <id>.length(); i ++)\n" + 
 				"\t<id>[i] = " + serializer + ";\n" +
 				"}");
 	}
@@ -49,7 +49,7 @@ public class CppReadSerializer extends ComposeSerializer {
 				"\t<class>::read(<host>, <stream>));");
 		super.add(Filter.SINGLE(filter),
 				  "<id> = <type>(<stream>.readInt()); {\n"
-				+ "\tint32_t i; for(i = 0; i < <id>.length; i ++)\n"
+				+ "\tint32_t i; for(i = 0; i < <id>.length(); i ++)\n"
 				+ "\ttryAssign(<typeSingle>, <id>[i], except,\n"
 				+ "\t\t<class>::read(<host>, <stream>));\n"
 				+ "}");

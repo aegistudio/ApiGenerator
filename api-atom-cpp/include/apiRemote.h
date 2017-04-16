@@ -20,7 +20,7 @@ namespace api {
 
 class ApiRemote {
 	ApiHost* host;
-	const int32_t handle;
+	int32_t handle;
 protected:
 	_EX(variant<int8_t>) 
 		call(int32_t, variant<int8_t>);

@@ -85,7 +85,7 @@ _EX(variant<int8_t>) ApiHost::call(
 	callPacket -> caller = marshal(&callTransaction);
 	callPacket -> callee = calleeId;
 	callPacket -> call = callId;
-	callPacket -> size = callData.length;
+	callPacket -> size = callData.length();
 	callPacket -> parameter = callData.transfer();
 	connection -> send(callPacket);
 
