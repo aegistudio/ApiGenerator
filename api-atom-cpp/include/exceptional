@@ -52,17 +52,27 @@ public:
 #define throwException(message)\
 	return ApiException(message);
 
+#define catchException(id, phrase)\
+	if(id.abnormal) { phrase; }
+
 #define checkException(id)\
-	if(id.abnormal) return id.exception;
+	catchException(id, return id.exception)
+
+#define tryException(T, id, expression)\
+	_EX(T) id = (expression);\
+	checkException(id);
+
+#define tryCatchException(T, id, expression, phrase)\
+	_EX(T) id = (expression);\
+	catchException(id, phrase);
 
 #define tryAssign(T, target, id, expression) {\
-	_EX(T) id##_except = (expression);\
-	checkException(id##_except);\
+	tryException(T, id##_except, expression);\
 	target = id##_except.value;\
 }
 
 #define tryDeclare(T, id, expression)\
-	_EX(T) id##_except = (expression);\
-	checkException(id##_except);\
+	tryException(T, id##_except, expression);\
 	T id = id##_except.value;
+
 };

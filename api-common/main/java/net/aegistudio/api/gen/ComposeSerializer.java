@@ -29,6 +29,6 @@ public class ComposeSerializer implements Serializer {
 				return;
 			}
 		throw new IllegalArgumentException(
-				"No matching serializer for " + typeResult.name(namespace) + "!");
+				"No matching serializer for " + typeResult.className(namespace) + "!");
 	}
 }

@@ -98,21 +98,31 @@ public class JavaRemoteGenerator extends JavaPerspectGenerator<Interfacing> {
 					.map(Parameter::type)
 					.map(typeTable::convertType)
 					.toArray(TypeTable.Result[]::new);
+			SymbolTable.Class[] parameterClassList = Arrays.stream(parameters)
+					.map(Parameter::type)
+					.map(symbolTable::lookup)
+					.toArray(SymbolTable.Class[]::new);
 			
-			boolean isVoid = method.result() == null;
 			TypeTable.Result returnValue = typeTable
 					.convertType(method.result());
+			SymbolTable.Class returnClass = symbolTable
+					.lookup(method.result());
+			boolean isVoid = returnClass.equals(
+					SymbolTable.Class.VOID);
 			
 			StringBuilder underlyingSignature = new StringBuilder(
 					"public <returnType> <methodName>("
-						.replace("<returnType>", returnValue.name(namespace))
+						.replace("<returnType>", returnValue.name(returnClass, namespace))
 						.replace("<methodName>", method.name()));
+			
 			for(int j = 0; j < parameters.length; j ++) {
 				if(j > 0) underlyingSignature.append(", ");
-				underlyingSignature.append(parameterTypeList[j].name(namespace));
+				underlyingSignature.append(parameterTypeList[j]
+						.name(parameterClassList[j], namespace));
 				underlyingSignature.append(" ");
 				underlyingSignature.append(parameterNameList[j]);			
 			}
+			
 			underlyingSignature.append(") throws ApiException {");
 			remotePrint.println(new String(underlyingSignature));
 			remotePrint.push();

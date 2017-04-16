@@ -11,7 +11,7 @@
 #include <iostream>
 #include <stdio.h>
 
-const int numPackets = 69;
+const int numPackets = 699;
 
 void test() throw(int) {
 	api::Pipe pipe(getPlatform());

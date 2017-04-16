@@ -19,5 +19,7 @@ ApiRemote::ApiRemote(const ApiRemote& _copy):
 _EX(variant<int8_t>) ApiRemote::call(
 	int32_t call, variant<int8_t> parameter) {
 
+	if(nullPointer()) throwException(
+		"Invoke on null pointer!");
 	return host -> call(handle, call, parameter);
 }

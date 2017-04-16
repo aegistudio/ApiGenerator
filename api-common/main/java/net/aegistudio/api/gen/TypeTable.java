@@ -1,5 +1,6 @@
 package net.aegistudio.api.gen;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import net.aegistudio.api.Namespace;
@@ -10,10 +11,19 @@ public class TypeTable {
 	protected final String[] primitiveTypes;
 	protected String commonSeparator;
 	protected String voidType;
+	
+	// Convert a class name (namespaced) to
+	// the actual type name of this object.
+	protected BiFunction<SymbolTable.Class, 
+		String, String> classToObject;
+	
+	// Convert an object name to array with
+	// component object name.
 	protected Function<String, String> variance;
 	protected Function<String, String> invariance = s -> s;
 	
-	public TypeTable(String commonSeparator, String voidType, 
+	public TypeTable(String commonSeparator, String voidType,
+			BiFunction<SymbolTable.Class, String, String> classToObject, 
 			Function<String, String> variance) {
 		
 		int allPrimitives = Primitive.values().length;
@@ -21,6 +31,7 @@ public class TypeTable {
 		this.commonSeparator = commonSeparator;
 		this.voidType = voidType;
 		this.variance = variance;
+		this.classToObject = classToObject;
 	}
 	
 	public void primitive(
@@ -51,16 +62,24 @@ public class TypeTable {
 			this(primitive, primitiveTypes[primitive.ordinal()], variant);
 		}
 		
-		public String component(Namespace namespace) {
-			String typeName;
-			if(primitive != null) typeName = rawName;
-			else typeName = namespace.concatenate(
+		public String className(Namespace namespace) {
+			String className;
+			if(primitive != null) className = rawName;
+			else className = namespace.concatenate(
 					rawName, commonSeparator);
-			return typeName;
+			return className;
 		}
 		
-		public String name(Namespace namespace) {
-			return predict.apply(component(namespace));
+		public String component(SymbolTable.Class symbolClass, 
+				Namespace namespace) {
+			return classToObject.apply(symbolClass, 
+					className(namespace));
+		}
+		
+		public String name(SymbolTable.Class symbolClass, 
+				Namespace namespace) {
+			return predict.apply(
+					component(symbolClass, namespace));
 		}
 	}
 	
@@ -70,7 +89,12 @@ public class TypeTable {
 			super(voidType, false);
 		}
 		
-		public String component(Namespace namespace) {
+		public String className(Namespace namespace) {
+			return rawName;
+		}
+		
+		public String component(SymbolTable.Class symbolClass, 
+				Namespace namespace) {
 			return rawName;
 		}
 	}

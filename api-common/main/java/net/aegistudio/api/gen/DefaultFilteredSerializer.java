@@ -23,8 +23,9 @@ public class DefaultFilteredSerializer implements FilteredSerializer {
 				.replace("<stream>", ioStream)
 				.replace("<id>", identifier)
 				.replace("<host>", apiHost)
-				.replace("<typeSingle>", typeResult.component(namespace))
-				.replace("<type>", typeResult.name(namespace));
+				.replace("<class>", typeResult.className(namespace))
+				.replace("<typeSingle>", typeResult.component(typeClass, namespace))
+				.replace("<type>", typeResult.name(typeClass, namespace));
 		printStream.println(result);
 	}
 

@@ -18,10 +18,11 @@ public class CppWriteSerializer extends ComposeSerializer {
 		compositeFilter(Filter.PRIMITIVE(Primitive.STRING), 
 				"api::String::write(<id>, <stream>)");
 		
-		// some::namespace::SomeObject.write(object, apiHost, inputStream)
-		String composeWriter = "<typeSingle>.write(<id>, <host>, <stream>)";
+		// some::namespace::SomeObject::write(object, apiHost, inputStream)
+		String composeWriter = "<typeSingle>::write(<id>, <host>, <stream>)";
 		compositeFilter(Filter.INTERFACE, composeWriter);
 		compositeFilter(Filter.CALLBACK, composeWriter);
+		compositeFilter(Filter.VALUE, composeWriter);
 	}
 	
 	private void primitiveFilter(Primitive primitive, String which) {

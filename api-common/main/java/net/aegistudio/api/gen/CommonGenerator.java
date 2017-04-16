@@ -23,7 +23,7 @@ public abstract class CommonGenerator implements Generator {
 			
 			if(symbolClass == SymbolTable.Class.UNDEFINED)
 				throw new IllegalArgumentException(
-						"Undefined symbol " + typeResult.name(namespace) + "!");
+						"Undefined symbol " + typeResult.className(namespace) + "!");
 			
 			whichSerializer.serialize(print, namespace, 
 					inputStream, apiHosting, names[i], 

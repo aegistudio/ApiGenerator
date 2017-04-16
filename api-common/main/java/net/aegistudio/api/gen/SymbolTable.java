@@ -19,7 +19,7 @@ import net.aegistudio.api.Value;
 
 public class SymbolTable {
 	public enum Class {
-		UNDEFINED, VALUE, INTERFACE, CALLBACK;
+		UNDEFINED, VOID, VALUE, INTERFACE, CALLBACK;
 	}
 	
 	protected final Map<String, Class> table = new TreeMap<>();
@@ -34,6 +34,7 @@ public class SymbolTable {
 	}
 	
 	public Class lookup(Type type) {
+		if(type == null) return Class.VOID;
 		if(Primitive.parse(type.name()) != null) 
 			return Class.VALUE;
 		return table.getOrDefault(

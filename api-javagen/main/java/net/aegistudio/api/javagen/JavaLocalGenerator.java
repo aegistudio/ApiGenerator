@@ -107,17 +107,25 @@ public class JavaLocalGenerator extends JavaPerspectGenerator<Interfacing> {
 					.map(Parameter::type)
 					.map(typeTable::convertType)
 					.toArray(TypeTable.Result[]::new);
+			SymbolTable.Class[] parameterClassList = Arrays.stream(parameters)
+					.map(Parameter::type)
+					.map(symbolTable::lookup)
+					.toArray(SymbolTable.Class[]::new);
 			
 			TypeTable.Result returnValue = typeTable
 					.convertType(method.result());
+			SymbolTable.Class returnClass = symbolTable
+					.lookup(method.result());
 			
 			StringBuilder underlyingSignature = new StringBuilder(
 					"public abstract <returnType> <methodName>("
-						.replace("<returnType>", returnValue.name(namespace))
+						.replace("<returnType>", returnValue.name(
+								returnClass, namespace))
 						.replace("<methodName>", method.name()));
 			for(int j = 0; j < parameters.length; j ++) {
 				if(j > 0) underlyingSignature.append(", ");
-				underlyingSignature.append(parameterTypeList[j].name(namespace));
+				underlyingSignature.append(parameterTypeList[j].name(
+						parameterClassList[j], namespace));
 				underlyingSignature.append(" ");
 				underlyingSignature.append(parameterNameList[j]);			
 			}
@@ -137,7 +145,8 @@ public class JavaLocalGenerator extends JavaPerspectGenerator<Interfacing> {
 			for(int j = 0; j < parameters.length; j ++) 
 				readSerial.serialize(localPrint, namespace, "dataInputStream", 
 						perspect.host()? "this" : "apiHost", 
-						parameterTypeList[j].name(namespace) + " " + parameterNameList[j], 
+						parameterTypeList[j].name(
+								parameterClassList[j], namespace) + " " + parameterNameList[j], 
 						parameterTypeList[j], symbolTable.lookup(parameters[j].type()));
 			
 			StringBuilder paramListBuilder = new StringBuilder();
@@ -151,7 +160,7 @@ public class JavaLocalGenerator extends JavaPerspectGenerator<Interfacing> {
 					.replace("<paramList>", new String(paramListBuilder));
 			
 			if(method.result() != null) {
-				localPrint.println(returnValue.name(namespace) + " result = " + invocation);
+				localPrint.println(returnValue.name(returnClass, namespace) + " result = " + invocation);
 				writeSerial.serialize(localPrint, namespace, "dataOutputStream", 
 						perspect.host()? "this" : "apiHost", "result", returnValue, 
 						symbolTable.lookup(method.result()));

@@ -5,7 +5,9 @@ import net.aegistudio.api.gen.TypeTable;
 
 public class JavaTypeTable extends TypeTable {
 	public JavaTypeTable() {
-		super(".", "void", type -> type + "[]");
+		super(".", "void", (
+				symbolClass, name) -> name, 
+				type -> type + "[]");
 		super.primitive(Primitive.BYTE, "byte");
 		super.primitive(Primitive.SHORT, "short");
 		super.primitive(Primitive.INT, "int");

@@ -31,7 +31,9 @@ public class JavaValueGenerator extends JavaPerspectGenerator<Value> {
 		for(Field field : valueType.fields()) {
 			TypeTable.Result typeResult = typeTable
 					.convertType(field.type());
-			String type = typeResult.name(namespace);
+			SymbolTable.Class symbolClass = symbolTable
+					.lookup(field.type());
+			String type = typeResult.name(symbolClass, namespace);
 			String name = field.name();
 			valuePrint.println("public <type> <id>;"
 					.replace("<type>", type)

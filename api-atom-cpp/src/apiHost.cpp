@@ -10,6 +10,12 @@
 
 #include <sstream>
 
+#define TRY_SERVEREX(T, id, expression)\
+	tryCatchException(T, id, expression, {\
+		serverExcept(id.exception);\
+		return;\
+	})
+
 using namespace api;
 
 ApiHost::ApiHost(ConnectionFactory& _factory, Platform& _platform):
@@ -85,8 +91,8 @@ _EX(variant<int8_t>) ApiHost::call(
 
 	// Wait for result, if an exception is generated,
 	// the call stack will be retraced.
-	_EX(void*) callStatus = callTransaction.call();
-	checkException(callStatus);
+	tryException(void*, callStatus,
+		callTransaction.call());
 
 	// Notice: data owns the result data now.
 	variant<int8_t> data(
@@ -121,6 +127,7 @@ void ApiHost::handle(Packet* packet) {
 
 void ApiHost::handleCall(Packet* packet) {
 	PacketCall* packetCall = reinterpret_cast<PacketCall*>(packet);
+
 	_EX(ApiObject*) callMonad = search(packetCall -> callee);
 	if(callMonad.abnormal) {
 		clientExcept(packetCall -> caller, callMonad.exception);
@@ -162,10 +169,8 @@ void ApiHost::handleCall(Packet* packet) {
 void ApiHost::handleReturn(Packet* packet) {
 	PacketReturn* packetReturn = reinterpret_cast<PacketReturn*>(packet);
 
-	_EX(ApiObject*) returnMonad = search(packetReturn -> caller);
-	if(returnMonad.abnormal) {
-		serverExcept(returnMonad.exception); return;
-	}
+	TRY_SERVEREX(ApiObject*, returnMonad,
+		search(packetReturn -> caller));
 
 	ApiObject* target = returnMonad.value;
 
@@ -186,13 +191,9 @@ void ApiHost::handleException(Packet* packet) {
 	if(packetException -> caller == 0)
 		serverExcept(packetException -> exception);
 	else {
-		_EX(ApiObject*) exceptMonad 
-			= search(packetException -> caller);
-		if(exceptMonad.abnormal) {
-			serverExcept(exceptMonad.exception);
-			return;
-		}
-
+		TRY_SERVEREX(ApiObject*, exceptMonad,
+			search(packetException -> caller));
+			
 		ApiObject* target = exceptMonad.value;
 		if(target -> callable()) {
 			serverExcept(ApiException("Not a transaction."));
