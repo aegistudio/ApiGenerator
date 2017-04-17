@@ -8,6 +8,7 @@ import net.aegistudio.api.Document;
 import net.aegistudio.api.Method;
 import net.aegistudio.api.Method.Parameter;
 import net.aegistudio.api.Namespace;
+import net.aegistudio.api.Primitive;
 import net.aegistudio.api.Type;
 import net.aegistudio.api.gen.CommonGenerator;
 import net.aegistudio.api.gen.Context;
@@ -144,6 +145,20 @@ public abstract class CppPerspectGenerator<Perspect> extends CommonGenerator {
 			if(i > 0) stringBuilder.append(", ");
 			stringBuilder.append(paramListType[i]
 					.name(paramListClass[i], namespace));
+
+			if(paramListType[i].variant) 
+				stringBuilder.append("&");
+			else if(paramListType[i].primitive == Primitive.STRING)
+				stringBuilder.append("&");
+			else if(paramListType[i].primitive == null) {
+				if(clientSide && !paramListClass
+						.equals(SymbolTable.Class.CALLBACK))
+					stringBuilder.append("&");
+				if(!clientSide && !paramListClass
+						.equals(SymbolTable.Class.INTERFACE))
+					stringBuilder.append("&");
+			}
+			
 			stringBuilder.append(" ");
 			stringBuilder.append(paramListName[i]);
 		}
