@@ -192,7 +192,8 @@ public class CppRemoteGenerator extends CppPerspectGenerator<Interfacing> {
 				
 				super.namedIoMethod(symbolTable, method.result(), 
 						"result", readSerializer, "input", 
-						namespace, sourcePrinter, interfacing.host());
+						namespace, sourcePrinter, 
+						interfacing.host()? "*this" : "*host");
 				sourcePrinter.println("return result;");
 			}
 			

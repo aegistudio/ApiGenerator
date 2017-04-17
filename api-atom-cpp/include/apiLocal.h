@@ -21,7 +21,7 @@ namespace api {
 
 class ApiLocal : public ApiObject {
 public:
-	virtual _EX(void*) invoke(int32_t callId, 
+	virtual _EX(void*) invoke(int32_t callId, ApiHost& host,
 		InputStream& request, OutputStream& response) {
 
 		std::stringstream message;

@@ -121,12 +121,54 @@ public class CppLocalGenerator extends CppPerspectGenerator<Interfacing> {
 					+ interfacing.name() + "(int _placeHolder):");
 			sourcePrinter.println("\t\tapi::ApiRemote() {}");
 			sourcePrinter.println();
+			
+			// Read serializer.
+			String readMethod = "_EX(" + interfacing.name() + "*) <midfix>read(api::ApiHost& _host, \n" 
+					+ "\tapi::InputStream& _inputStream)";
+			includePrinter.println("static " + readMethod.replace("<midfix>", "") + ";");
+			includePrinter.println();
+			
+			sourcePrinter.println("// Implement the read method.");
+			sourcePrinter.println(readMethod.replace("<midfix>", interfacing.name() + "::") + " {");
+			sourcePrinter.println();
+			sourcePrinter.push();
+			sourcePrinter.println("int32_t _address = _inputStream.readInt();");
+			sourcePrinter.println("if(_address == 0) return NULL;");
+			sourcePrinter.println();
+			sourcePrinter.println("tryDeclare(ApiObject*, result, \n" 
+					+ "\t_host -> search(_address));");
+			sourcePrinter.println("return reinterpret_cast<" + interfacing.name() + "*>(result);");
+			sourcePrinter.pop();
+			sourcePrinter.println("}");
+			sourcePrinter.println();
+			
+			// Write serializer.
+			String writeMethod = "_EX(void*) <midfix>write(" + interfacing.name() + "* _object, api::ApiHost& _host, \n"
+					+ "\t api::OutputStream& _outputStream) {";
+			includePrinter.println("static " + writeMethod.replace("<midfix>", "") + ";");
+			includePrinter.println();
+			
+			sourcePrinter.println("// Implement the write method.");
+			sourcePrinter.println(writeMethod.replace("<midfix>", interfacing.name() + "::") + " {");
+			sourcePrinter.push();
+			sourcePrinter.println();
+			
+			sourcePrinter.println("if(_object == NULL) _outputStream.writeInt(0);");
+			sourcePrinter.println("else {");
+			sourcePrinter.push();
+			sourcePrinter.println("int32_t _handle = _host.marshal(_object);");
+			sourcePrinter.println("_outputStream.writeInt(_handle);");
+			sourcePrinter.pop();
+			sourcePrinter.println("}");
+			
+			sourcePrinter.pop();
+			sourcePrinter.println("}");
+			sourcePrinter.println();
 		}
 		
 		// Invoke method skeleton.
-		String invokeMethod = "<prefix>_EX(void*) invoke(int32_t callId, \n" +
-					"\t\tapi::InputStream& inputStream, \n" + 
-					"\t\tapi::OutputStream& outputStream)";
+		String invokeMethod = "<prefix>_EX(void*) invoke(int32_t callId, api::ApiHost& host\n" +
+					"\t\tapi::InputStream& inputStream, api::OutputStream& outputStream)";
 		
 		includePrinter.println(invokeMethod
 				.replace("<midfix>", "")
@@ -144,11 +186,11 @@ public class CppLocalGenerator extends CppPerspectGenerator<Interfacing> {
 		sourcePrinter.push();
 		for(int i = 0; i < invokeMethods.length; i ++) {
 			sourcePrinter.println("case " + i + ":");
-			sourcePrinter.println("\treturn " + invokeMethods[i] + "(inputStream, outputStream);");
+			sourcePrinter.println("\treturn " + invokeMethods[i] + "(host, inputStream, outputStream);");
 			sourcePrinter.println();
 		}
 		sourcePrinter.println("default:");
-		sourcePrinter.println("\treturn api::ApiLocal::invoke(callId, ");
+		sourcePrinter.println("\treturn api::ApiLocal::invoke(callId, host, ");
 		sourcePrinter.println("\t\tinputStream, outputStream);");
 		sourcePrinter.pop();
 		sourcePrinter.println("}");
@@ -172,8 +214,8 @@ public class CppLocalGenerator extends CppPerspectGenerator<Interfacing> {
 		for(int m = 0; m < methods.length; m ++) {
 			Method method = methods[m];
 			if(m > 0) includePrinter.println();
-			String invokeSignature = "_EX(void*) <prefix>" + invokeMethods[m] + "(" 
-					+ "api::InputStream& inputStream, \n\tapi::OutputStream& outputStream)";
+			String invokeSignature = "_EX(void*) <prefix>" + invokeMethods[m] + "(api::ApiHost& host, " 
+					+ "\n\tapi::InputStream& inputStream, api::OutputStream& outputStream)";
 			includePrinter.println(invokeSignature.replace("<prefix>", "") + ";");
 			
 			// The real unpacker call method.
@@ -189,7 +231,7 @@ public class CppLocalGenerator extends CppPerspectGenerator<Interfacing> {
 			
 			sourcePrinter.println("// Implement delegator " + method.name() + ".");
 			sourcePrinter.println(invokeSignature
-					.replace("<prefix>", interfacing.name()) + "{");
+					.replace("<prefix>", interfacing.name() + "::") + " {");
 			sourcePrinter.push();
 			sourcePrinter.println();
 			
@@ -197,7 +239,7 @@ public class CppLocalGenerator extends CppPerspectGenerator<Interfacing> {
 			for(int i = 0; i < parameterName.length; i ++) 
 				super.namedIoMethod(symbolTable, parameterType[i], 
 						parameterName[i], readSerializer, "inputStream", 
-						namespace, sourcePrinter, interfacing.host());
+						namespace, sourcePrinter, "host");
 			sourcePrinter.println();
 			
 			StringBuilder invocationMethod = new StringBuilder();

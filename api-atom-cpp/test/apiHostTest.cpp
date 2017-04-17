@@ -75,7 +75,8 @@ private:
 		return NULL;
 	}
 public:
-	virtual _EX(void*) invoke(int32_t callId, 
+	virtual _EX(void*) invoke(
+		int32_t callId, ApiHost& host,
 		api::InputStream& inputStream, 
 		api::OutputStream& outputStream) {
 
@@ -84,7 +85,7 @@ public:
 				return invokeThreeSum(inputStream, outputStream);
 			break;
 			default:
-				return ApiLocal::invoke(callId, 
+				return ApiLocal::invoke(callId, host,
 					inputStream, outputStream);
 		}
 	}

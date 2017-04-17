@@ -150,7 +150,8 @@ void ApiHost::handleCall(Packet* packet) {
 			BufferOutputStream outputStream;
 
 			_EX(void*) resultMonad = callable -> invoke(
-				packetCall -> call, inputStream, outputStream);
+				packetCall -> call, *this, 
+				inputStream, outputStream);
 
 			if(resultMonad.abnormal) 
 				clientExcept(packetCall -> caller, 

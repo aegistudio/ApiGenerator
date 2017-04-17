@@ -172,7 +172,7 @@ public abstract class CppPerspectGenerator<Perspect> extends CommonGenerator {
 	
 	protected void namedIoMethod(SymbolTable symbolTable, Type type, String name, 
 			Serializer serializer, String stream, Namespace namespace, 
-			IndentPrintStream printer, boolean isHost) throws IOException {
+			IndentPrintStream printer, String host) throws IOException {
 		
 		TypeTable.Result typeResult = typeTable
 				.convertType(type);
@@ -187,6 +187,6 @@ public abstract class CppPerspectGenerator<Perspect> extends CommonGenerator {
 			printer.println(typeResult.name(symbolResult, namespace) + " " + name + ";");
 		else printer.println(typeResult.name(symbolResult, namespace) + " /** Align here. **/");
 		super.ioMethod(symbolTable, namespace, serializer, stream, 
-				isHost? "*this" : "*host", printer, new Type[] { type }, new String[] { name });
+				host, printer, new Type[] { type }, new String[] { name });
 	}
 }
