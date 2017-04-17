@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import net.aegistudio.api.cppgen.CppGeneratorFactory;
 import net.aegistudio.api.gen.Context;
 import net.aegistudio.api.gen.FileContext;
 import net.aegistudio.api.gen.Generator;
@@ -27,6 +28,7 @@ public class GeneratorMain {
 	
 	final Map<String, GeneratorFactory> generatorMap = new TreeMap<>(); {
 		generatorMap.put("java", new JavaGeneratorFactory());
+		generatorMap.put("cpp", new CppGeneratorFactory());
 	}
 	
 	public void displayHelp(GeneratorFormat format) {

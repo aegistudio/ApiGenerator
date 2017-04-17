@@ -1,0 +1,22 @@
+COMPILER = ${tool.compiler}
+LINKER = ${tool.linker}
+LIBTOOL = ${tool.libtool}
+
+TARGET = ${api.sources}
+HOME = ${api.home}
+
+${api.distribution}-${api.language}-${api.flavour}.${api.version}.lib: $(TARGET)
+	$(LIBTOOL) rv $@ $^
+
+$(TARGET): %.obj : src/%.cpp
+	$(COMPILER) $(CXXFLAGS) -c $< -o $@ -I include -I $(HOME)/include
+
+clean: clean.shell
+
+clean.shell:
+	rm *.lib
+	rm *.obj
+
+clean.cmd:
+	del *.lib
+	del *.obj

@@ -1,25 +1,17 @@
 package net.aegistudio.api.javagen;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 import net.aegistudio.api.Document;
+import net.aegistudio.api.gen.CommonFactory;
 import net.aegistudio.api.gen.Context;
 import net.aegistudio.api.gen.Generator;
-import net.aegistudio.api.gen.GeneratorFactory;
-import net.aegistudio.api.gen.HandleInterfacing;
-import net.aegistudio.api.gen.HostInterfacing;
-import net.aegistudio.api.gen.Interfacing;
 
-public class JavaGeneratorFactory implements GeneratorFactory {
+public class JavaGeneratorFactory extends CommonFactory {
 	@Override
 	public void initialize(Map<String, String> configuration) {
 		configuration.put("source", "main/java");
-		configuration.put("generate-pom", null);
 	}
 
 	@Override
@@ -28,25 +20,6 @@ public class JavaGeneratorFactory implements GeneratorFactory {
 							+ "The default value would be 'main/java'.");
 		help.put("generate-pom", "Whether would generate pom.xml for the project."
 							+ "The default value would be set to false / unspecified.");
-	}
-	
-	protected Interfacing[] allInterfaces(Document dom, boolean client) {
-		List<Interfacing> interfaces = new ArrayList<>();
-		Arrays.stream(dom.interfaces())
-			.map(HandleInterfacing::new)
-			.forEach(interfaces::add);
-		interfaces.add(new HostInterfacing(dom, client));
-		return interfaces.toArray(new Interfacing[0]);
-	}
-	
-	public Function<Document, Interfacing[]> allInterfaces(boolean client) {
-		return document -> allInterfaces(document, client);
-	}
-	
-	protected Interfacing[] allCallbacks(Document dom) {
-		return Arrays.stream(dom.callbacks())
-				.map(HandleInterfacing::new)
-				.toArray(Interfacing[]::new);
 	}
 	
 	@Override
@@ -78,6 +51,4 @@ public class JavaGeneratorFactory implements GeneratorFactory {
 			}
 		};
 	}
-	
-	
 }
