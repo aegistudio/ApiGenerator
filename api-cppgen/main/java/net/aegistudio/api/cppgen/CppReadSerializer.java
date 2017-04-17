@@ -47,7 +47,7 @@ public class CppReadSerializer extends ComposeSerializer {
 		super.add(Filter.SINGLE(filter), 
 				"tryAssign(<typeSingle>, <id>, <id>, \n" + 
 				"\t<class>::read(<host>, <stream>));");
-		super.add(Filter.SINGLE(filter),
+		super.add(Filter.VARIANT(filter),
 				  "<id> = <type>(<stream>.readInt()); {\n"
 				+ "\tint32_t i; for(i = 0; i < <id>.length(); i ++)\n"
 				+ "\ttryAssign(<typeSingle>, <id>[i], except,\n"

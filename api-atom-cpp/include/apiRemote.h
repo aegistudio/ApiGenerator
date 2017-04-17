@@ -10,26 +10,33 @@
 
 #pragma once
 
+#include <stddef.h>
 #include <stdint.h>
 
 #include "apiHost.h"
 #include "apiException.h"
+#include "stream.h"
 #include <exceptional>
 
 namespace api {
 
 class ApiRemote {
+protected:
 	ApiHost* host;
 	int32_t handle;
-protected:
+
 	_EX(variant<int8_t>) 
 		call(int32_t, variant<int8_t>);
-public:
-	ApiRemote(ApiHost*, int32_t);
 
+	ApiRemote();
+public:
 	ApiRemote(const ApiRemote&);
 
 	bool nullPointer() const;
+
+	void read(ApiHost&, InputStream&);
+
+	void write(ApiHost&, OutputStream&);
 };
 
 };

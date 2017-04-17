@@ -43,7 +43,7 @@ public abstract class CppPerspectGenerator<Perspect> extends CommonGenerator {
 			includePrint.println("#pragma once");
 			includePrint.println("#include \"apiGenerate.h\"");
 			includePrint.println();
-
+			
 			OutputStream sourceOutput = sourceFolder
 					.file(name(perspect) + ".cpp");
 			IndentPrintStream sourcePrint = new IndentPrintStream(sourceOutput);
@@ -55,7 +55,28 @@ public abstract class CppPerspectGenerator<Perspect> extends CommonGenerator {
 			sourceOutput.close();
 		}
 	}
+	
+	protected void openNamespace(Namespace namespace, IndentPrintStream printStream) {
+		String[] theNamespacing = namespace.namespace();
+		printStream.println("// Open class namespace.");
+		for(int i = 0; i < theNamespacing.length; i ++) {
+			String namespacing = theNamespacing[i];
+			printStream.println("namespace " + namespacing + " { ");
+		}
+		printStream.println();
+	}
 
+	protected void closeNamespace(Namespace namespace, IndentPrintStream printStream) {
+		String[] theNamespacing = namespace.namespace();
+		// Class un-namespacing.
+		printStream.println("// Close class namespace");
+		for(int i = theNamespacing.length - 1; i >= 0; i --) {
+			String namespacing = theNamespacing[i];
+			printStream.println("}; /* namespace " + namespacing + " */ ");
+		}
+		printStream.println();
+	}
+	
 	protected abstract Perspect[] perspect(Document document);
 	
 	protected abstract String name(Perspect perspect);
@@ -86,7 +107,7 @@ public abstract class CppPerspectGenerator<Perspect> extends CommonGenerator {
 		stringBuilder.append(prefix);
 		
 		// Signature of the return type.
-		stringBuilder.append(" _EX(");
+		stringBuilder.append("_EX(");
 		TypeTable.Result returnTypeResult 
 			= typeTable.convertType(method.result());
 		SymbolTable.Class returnClassResult

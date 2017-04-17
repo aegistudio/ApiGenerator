@@ -55,13 +55,7 @@ public class CppValueGenerator extends CppPerspectGenerator<Value> {
 					"#include \"" + type.name() + ".h\""));
 		includePrinter.println();
 		
-		includePrinter.println("// Open class namespace.");
-		String[] theNamespacing = namespace.namespace();
-		for(int i = 0; i < theNamespacing.length; i ++) {
-			String namespacing = theNamespacing[i];
-			includePrinter.println("namespace " + namespacing + " { ");
-		}
-		includePrinter.println();
+		super.openNamespace(namespace, includePrinter);
 		
 		includePrinter.println("// Class definition.");
 		includePrinter.println("class " + perspect.name() + "{");
@@ -82,7 +76,7 @@ public class CppValueGenerator extends CppPerspectGenerator<Value> {
 		includePrinter.println();
 		
 		// Method list printing.
-		includePrinter.println(perspect.name() + "();");	// constructor.
+		includePrinter.println(perspect.name() + "(int = 0);");	// constructor.
 		includePrinter.println();
 		
 		includePrinter.println("static " 
@@ -99,13 +93,7 @@ public class CppValueGenerator extends CppPerspectGenerator<Value> {
 		includePrinter.println("};");
 		includePrinter.println();
 		
-		includePrinter.println("// Close class namespace");
-		// Class un-namespacing.
-		for(int i = theNamespacing.length - 1; i >= 0; i --) {
-			String namespacing = theNamespacing[i];
-			includePrinter.println("}; /* namespace " + namespacing + " */ ");
-		}
-		includePrinter.println();
+		super.closeNamespace(namespace, includePrinter);
 		
 		// Include the value include file.
 		sourcePrinter.println("#include \"" 
@@ -118,7 +106,7 @@ public class CppValueGenerator extends CppPerspectGenerator<Value> {
 		// Now the constructor.
 		sourcePrinter.println("// Implement value constructor.");
 		sourcePrinter.println(perspect.name() + "::" 
-				+ perspect.name() + "():");
+				+ perspect.name() + "(int placeHolder):");
 		
 		StringBuilder initializeTable = new StringBuilder();
 		for(int i = 0; i < fieldList.length; i ++) {
