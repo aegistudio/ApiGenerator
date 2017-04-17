@@ -3,13 +3,13 @@ LINKER = ${tool.linker}
 LIBTOOL = ${tool.libtool}
 
 TARGET = ${api.sources}
-HOME = ${api.home}
+APIHOME = ${api.home}
 
 ${api.distribution}-${api.language}-${api.flavour}.${api.version}.lib: $(TARGET)
 	$(LIBTOOL) /OUT:$@ $^ 
 
 $(TARGET): %.obj : src/%.cpp
-	$(COMPILER) $(CXXFLAGS) /c $< /Fo$@ /I include /I $(HOME)/include
+	$(COMPILER) $(CXXFLAGS) /c $< /Fo$@ /I include /I $(APIHOME)/include
 
 clean: clean.cmd
 
