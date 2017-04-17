@@ -17,10 +17,11 @@ import net.aegistudio.api.Type;
 import net.aegistudio.api.gen.IndentPrintStream;
 import net.aegistudio.api.gen.Interfacing;
 import net.aegistudio.api.gen.SymbolTable;
+import net.aegistudio.api.gen.TypeTable;
 
-public class CppRemoteGenerator extends CppPerspectGenerator<Interfacing> {
+public class CppLocalGenerator extends CppPerspectGenerator<Interfacing> {
 	protected final Function<Document, Interfacing[]> mapping;
-	public CppRemoteGenerator(boolean clientSide, 
+	public CppLocalGenerator(boolean clientSide, 
 			Function<Document, Interfacing[]> mapping) {
 		super(clientSide);
 		this.mapping = mapping;
@@ -39,6 +40,14 @@ public class CppRemoteGenerator extends CppPerspectGenerator<Interfacing> {
 	@Override
 	protected void construct(Interfacing interfacing, SymbolTable symbolTable, Namespace namespace,
 			IndentPrintStream includePrinter, IndentPrintStream sourcePrinter) throws IOException {
+		Method[] methods = interfacing.methods();
+		String[] invokeMethods = Arrays.stream(methods)
+				.map(Method::name)
+				.map(name -> {
+					String head = name.substring(0, 1);
+					String tail = name.substring(1);
+					return "invoke" + head.toUpperCase() + tail;
+				}).toArray(String[]::new);
 		
 		// Profile Dependencies.
 		List<Type> enrolledTypes = new ArrayList<>();
@@ -54,7 +63,7 @@ public class CppRemoteGenerator extends CppPerspectGenerator<Interfacing> {
 		
 		Type[] dependencies = super.filterType(
 				enrolledTypes.toArray(new Type[0]), symbolTable);
-		
+
 		super.openNamespace(namespace, includePrinter);
 		
 		includePrinter.println("// Dependency types.");
@@ -79,19 +88,11 @@ public class CppRemoteGenerator extends CppPerspectGenerator<Interfacing> {
 				+ namespace.concatenate("::") + ";");
 		sourcePrinter.println();
 		
-		// Profile read/write method.
-		String readMethod = "_EX(" + interfacing.name() 
-			+ ") <midfix>read(api::ApiHost& _host, \n" 
-			+ "\t\tapi::InputStream& _inputStream)";
-		String writeMethod = "void <midfix>write(" + interfacing.name() 
-			+ "& _object, api::ApiHost& _host, \n"
-			+ "\t\tapi::OutputStream& _outputStream)";
-		
 		// Write the class.
 		includePrinter.println("// Class definition.");
 		if(interfacing.host()) {
-			if(!clientSide) throw new IllegalStateException(
-					"Attempting to generate api server as remote object.");
+			if(clientSide) throw new IllegalStateException(
+					"Attempting to generate api server as local object.");
 			
 			includePrinter.println("class " + interfacing.name() + " : public api::ApiHost {");
 			includePrinter.println("public:");
@@ -99,6 +100,7 @@ public class CppRemoteGenerator extends CppPerspectGenerator<Interfacing> {
 			
 			String constructor = interfacing.name() + "(api::ConnectionFactory& factory, api::Platform& platform)";
 			includePrinter.println(constructor + ";");
+			includePrinter.println();
 			
 			sourcePrinter.println("// Construct the host from connection factory.");
 			sourcePrinter.println(interfacing.name() + "::" + constructor + ":");
@@ -106,7 +108,7 @@ public class CppRemoteGenerator extends CppPerspectGenerator<Interfacing> {
 			sourcePrinter.println();
 		}
 		else {
-			includePrinter.println("class " + interfacing.name() + " : public api::ApiRemote {");
+			includePrinter.println("class " + interfacing.name() + " : public api::ApiLocal {");
 			includePrinter.println("public:");
 			includePrinter.push();
 			
@@ -119,39 +121,62 @@ public class CppRemoteGenerator extends CppPerspectGenerator<Interfacing> {
 					+ interfacing.name() + "(int _placeHolder):");
 			sourcePrinter.println("\t\tapi::ApiRemote() {}");
 			sourcePrinter.println();
-			
-			// Read method.
-			includePrinter.println("static " + readMethod.replace("<midfix>", "") + ";");
-			includePrinter.println();
-			
-			sourcePrinter.println("// Implement the read method.");
-			sourcePrinter.println(readMethod.replace("<midfix>", interfacing.name() + "::") + "{");
-			sourcePrinter.push();
-			sourcePrinter.println(interfacing.name() + " result;");
-			sourcePrinter.println("result.api::ApiRemote::read(_host, _inputStream);");
-			sourcePrinter.println("return result;");
-			sourcePrinter.pop();
-			sourcePrinter.println("}");
-			sourcePrinter.println();
-
-			// Write method.
-			includePrinter.println("static " + writeMethod.replace("<midfix>", "") + ";");
-			
-			sourcePrinter.println("// Implement the write method.");
-			sourcePrinter.println(writeMethod.replace("<midfix>", interfacing.name() + "::") + "{");
-			sourcePrinter.println("\t_object.api::ApiRemote::write(_host, _outputStream);");
-			sourcePrinter.println("}");
-			sourcePrinter.println();
 		}
 		
-		Method[] methods = interfacing.methods();
+		// Invoke method skeleton.
+		String invokeMethod = "<prefix>_EX(void*) invoke(int32_t callId, \n" +
+					"\t\tapi::InputStream& inputStream, \n" + 
+					"\t\tapi::OutputStream& outputStream)";
+		
+		includePrinter.println(invokeMethod
+				.replace("<midfix>", "")
+				.replace("<prefix>", "virtual ") + ";");
+		includePrinter.println();
+		
+		sourcePrinter.println("// Invoke the unpacking method.");
+		sourcePrinter.println(invokeMethod
+				.replace("<midfix>", interfacing.name() + "::")
+				.replace("<prefix>", "") + " {");
+		sourcePrinter.println();
+		
+		sourcePrinter.push();
+		sourcePrinter.println("switch(callId) {");
+		sourcePrinter.push();
+		for(int i = 0; i < invokeMethods.length; i ++) {
+			sourcePrinter.println("case " + i + ":");
+			sourcePrinter.println("\treturn " + invokeMethods[i] + "(inputStream, outputStream);");
+			sourcePrinter.println();
+		}
+		sourcePrinter.println("default:");
+		sourcePrinter.println("\treturn api::ApiLocal::invoke(callId, ");
+		sourcePrinter.println("\t\tinputStream, outputStream);");
+		sourcePrinter.pop();
+		sourcePrinter.println("}");
+		
+		sourcePrinter.pop();
+		sourcePrinter.println("}");
+		sourcePrinter.println();
+		
+		// Invoke method stubs.
 		for(int m = 0; m < methods.length; m ++) {
 			Method method = methods[m];
-			includePrinter.println();
-			super.methodSignature("", "", ";", symbolTable, 
+			super.methodSignature("virtual ", "", " = 0;", symbolTable, 
 					namespace, method, includePrinter);
+			includePrinter.println();
+		}
+		
+		includePrinter.pop();
+		includePrinter.println("private:");
+		includePrinter.push();
+		
+		for(int m = 0; m < methods.length; m ++) {
+			Method method = methods[m];
+			if(m > 0) includePrinter.println();
+			String invokeSignature = "_EX(void*) <prefix>" + invokeMethods[m] + "(" 
+					+ "api::InputStream& inputStream, \n\tapi::OutputStream& outputStream)";
+			includePrinter.println(invokeSignature.replace("<prefix>", "") + ";");
 			
-			// The real continuation call method.
+			// The real unpacker call method.
 			String[] parameterName = Arrays
 					.stream(method.parameters())
 					.map(Parameter::name)
@@ -162,40 +187,50 @@ public class CppRemoteGenerator extends CppPerspectGenerator<Interfacing> {
 					.map(Parameter::type)
 					.toArray(Type[]::new);
 			
-			sourcePrinter.println("// Implement continuation " + method.name() + ".");
-			super.methodSignature("", interfacing.name() + "::", "{", 
-					symbolTable, namespace, method, sourcePrinter);
+			sourcePrinter.println("// Implement delegator " + method.name() + ".");
+			sourcePrinter.println(invokeSignature
+					.replace("<prefix>", interfacing.name()) + "{");
 			sourcePrinter.push();
+			sourcePrinter.println();
 			
-			sourcePrinter.println("api::BufferOutputStream output;");
+			sourcePrinter.println("// Collect parameters for " + method.name() + ".");
 			for(int i = 0; i < parameterName.length; i ++) 
-				super.ioMethod(symbolTable, namespace, writeSerializer, "output", 
-						interfacing.host()? "*this" : "*host", 
-						sourcePrinter, parameterType, parameterName);
+				super.namedIoMethod(symbolTable, parameterType[i], 
+						parameterName[i], readSerializer, "inputStream", 
+						namespace, sourcePrinter, interfacing.host());
 			sourcePrinter.println();
 			
-			sourcePrinter.println("api::variant<int8_t> callData(");
-			sourcePrinter.println("\toutput.size(), output.clone());");
-			sourcePrinter.println();
+			StringBuilder invocationMethod = new StringBuilder();
+			invocationMethod.append(method.name());
+			invocationMethod.append("(");
+			for(int i = 0; i < parameterName.length; i ++) {
+				if(i > 0) invocationMethod.append(", ");
+				invocationMethod.append(parameterName[i]);
+			}
+			invocationMethod.append(")");
 			
-			sourcePrinter.println("tryDeclare(api::variant<int8_t>, callResult, ");
-			sourcePrinter.println("\tthis -> " + (interfacing.host()? 
-					"call(0, " : "call(") + m + ", callData));");
-			sourcePrinter.println();
-			
-			if(method.result() == null)
-				sourcePrinter.println("return NULL;");
+			sourcePrinter.println("// Invoke delegated method " + method.name() + ".");
+			if(method.result() == null) {
+				sourcePrinter.println("tryDeclare(void*, result, ");
+				sourcePrinter.println("\t" + new String(invocationMethod) + ");");
+				sourcePrinter.println();
+			}
 			else {
-				sourcePrinter.println("api::BufferInputStream input(");
-				sourcePrinter.println("\tcallResult.length(), *callResult);");
+				TypeTable.Result resultType = typeTable
+						.convertType(method.result());
+				SymbolTable.Class resultClazz = symbolTable
+						.lookup(method.result());
+				
+				sourcePrinter.println("tryDeclare(" + resultType.name(resultClazz, namespace) + ", result, ");
+				sourcePrinter.println("\t" + new String(invocationMethod) + ");");
 				sourcePrinter.println();
 				
-				super.namedIoMethod(symbolTable, method.result(), 
-						"result", readSerializer, "input", 
-						namespace, sourcePrinter, interfacing.host());
-				sourcePrinter.println("return result;");
+				sourcePrinter.println("// Collect result of " + method.name() + ".");
+				super.ioMethod(symbolTable, namespace, writeSerializer, 
+						"outputStream", "host", sourcePrinter, 
+						new Type[] { method.result() } , new String[] { "result" });
 			}
-			
+			sourcePrinter.println("return NULL;");
 			sourcePrinter.pop();
 			sourcePrinter.println("}");
 			sourcePrinter.println();

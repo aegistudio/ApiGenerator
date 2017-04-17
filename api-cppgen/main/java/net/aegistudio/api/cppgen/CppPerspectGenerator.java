@@ -13,6 +13,7 @@ import net.aegistudio.api.Type;
 import net.aegistudio.api.gen.CommonGenerator;
 import net.aegistudio.api.gen.Context;
 import net.aegistudio.api.gen.IndentPrintStream;
+import net.aegistudio.api.gen.Serializer;
 import net.aegistudio.api.gen.SymbolTable;
 import net.aegistudio.api.gen.TypeTable;
 
@@ -151,11 +152,11 @@ public abstract class CppPerspectGenerator<Perspect> extends CommonGenerator {
 			else if(paramListType[i].primitive == Primitive.STRING)
 				stringBuilder.append("&");
 			else if(paramListType[i].primitive == null) {
-				if(clientSide && !paramListClass
+				if(clientSide && !paramListClass[i]
 						.equals(SymbolTable.Class.CALLBACK))
 					stringBuilder.append("&");
-				if(!clientSide && !paramListClass
-						.equals(SymbolTable.Class.INTERFACE))
+				if((!clientSide) && (!paramListClass[i]
+						.equals(SymbolTable.Class.INTERFACE)))
 					stringBuilder.append("&");
 			}
 			
@@ -167,5 +168,25 @@ public abstract class CppPerspectGenerator<Perspect> extends CommonGenerator {
 		stringBuilder.append(")");
 		stringBuilder.append(postfix);
 		printer.println(new String(stringBuilder));
+	}
+	
+	protected void namedIoMethod(SymbolTable symbolTable, Type type, String name, 
+			Serializer serializer, String stream, Namespace namespace, 
+			IndentPrintStream printer, boolean isHost) throws IOException {
+		
+		TypeTable.Result typeResult = typeTable
+				.convertType(type);
+		SymbolTable.Class symbolResult = symbolTable
+				.lookup(type);
+		
+		// Eliminate those three using try-assigning.
+		if(typeResult.primitive == null && !type.variant()
+				&&(SymbolTable.Class.CALLBACK.equals(symbolResult)
+				|| SymbolTable.Class.INTERFACE.equals(symbolResult)
+				|| SymbolTable.Class.VALUE.equals(symbolResult)))
+			printer.println(typeResult.name(symbolResult, namespace) + " " + name + ";");
+		else printer.println(typeResult.name(symbolResult, namespace) + " /** Align here. **/");
+		super.ioMethod(symbolTable, namespace, serializer, stream, 
+				isHost? "*this" : "*host", printer, new Type[] { type }, new String[] { name });
 	}
 }

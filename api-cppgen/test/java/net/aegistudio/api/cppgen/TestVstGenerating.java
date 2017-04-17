@@ -40,12 +40,14 @@ public class TestVstGenerating {
 		if(!(remote ^ client))
 			interfacingList.add(new HostInterfacing(document, client));
 		
-		Arrays.stream(document.interfaces())
-			.map(HandleInterfacing::new)
-			.forEach(interfacingList::add);
-		Arrays.stream(document.callbacks())
-			.map(HandleInterfacing::new)
-			.forEach(interfacingList::add);
+		if(!(remote ^ client))
+			Arrays.stream(document.interfaces())
+				.map(HandleInterfacing::new)
+				.forEach(interfacingList::add);
+		if(remote ^ client)
+			Arrays.stream(document.callbacks())
+				.map(HandleInterfacing::new)
+				.forEach(interfacingList::add);
 		return interfacingList.toArray(new Interfacing[0]);
 	}
 	
@@ -57,13 +59,15 @@ public class TestVstGenerating {
 		serverGenerator.generate(makeContext(true), dom);
 	}
 	
-	/*
 	public @Test void testLocal() throws IOException {
-		JavaLocalGenerator generator = new JavaLocalGenerator(
-				dom -> this.allInterface(dom, false));
-		generator.generate(makeContext("local"), dom);
+		CppLocalGenerator clientGenerator = new CppLocalGenerator(
+				false, document -> this.allInterface(document, false, false));
+		clientGenerator.generate(makeContext(false), dom);
+		
+		CppLocalGenerator serverGenerator = new CppLocalGenerator(
+				true, document -> this.allInterface(document, true, false));
+		serverGenerator.generate(makeContext(true), dom);
 	}
-	*/
 	
 	public @Test void testRemote() throws IOException {
 		CppRemoteGenerator clientGenerator = new CppRemoteGenerator(
