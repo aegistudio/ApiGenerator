@@ -119,7 +119,7 @@ public class CppLocalGenerator extends CppPerspectGenerator<Interfacing> {
 			sourcePrinter.println("// Invoke the null parameter constructor.");
 			sourcePrinter.println(interfacing.name() + "::" 
 					+ interfacing.name() + "(int _placeHolder):");
-			sourcePrinter.println("\t\tapi::ApiRemote() {}");
+			sourcePrinter.println("\t\tapi::ApiLocal() {}");
 			sourcePrinter.println();
 			
 			// Read serializer.
@@ -136,7 +136,7 @@ public class CppLocalGenerator extends CppPerspectGenerator<Interfacing> {
 			sourcePrinter.println("if(_address == 0) return NULL;");
 			sourcePrinter.println();
 			sourcePrinter.println("tryDeclare(ApiObject*, result, \n" 
-					+ "\t_host -> search(_address));");
+					+ "\t_host.search(_address));");
 			sourcePrinter.println("return reinterpret_cast<" + interfacing.name() + "*>(result);");
 			sourcePrinter.pop();
 			sourcePrinter.println("}");
@@ -144,7 +144,7 @@ public class CppLocalGenerator extends CppPerspectGenerator<Interfacing> {
 			
 			// Write serializer.
 			String writeMethod = "_EX(void*) <midfix>write(" + interfacing.name() + "* _object, api::ApiHost& _host, \n"
-					+ "\t api::OutputStream& _outputStream) {";
+					+ "\t api::OutputStream& _outputStream)";
 			includePrinter.println("static " + writeMethod.replace("<midfix>", "") + ";");
 			includePrinter.println();
 			
@@ -167,18 +167,16 @@ public class CppLocalGenerator extends CppPerspectGenerator<Interfacing> {
 		}
 		
 		// Invoke method skeleton.
-		String invokeMethod = "<prefix>_EX(void*) invoke(int32_t callId, api::ApiHost& host\n" +
+		String invokeMethod = "_EX(void*) <midfix>invoke(int32_t callId, api::ApiHost& host, \n" +
 					"\t\tapi::InputStream& inputStream, api::OutputStream& outputStream)";
 		
-		includePrinter.println(invokeMethod
-				.replace("<midfix>", "")
-				.replace("<prefix>", "virtual ") + ";");
+		includePrinter.println("virtual " + invokeMethod
+				.replace("<midfix>", "") + ";");
 		includePrinter.println();
 		
 		sourcePrinter.println("// Invoke the unpacking method.");
 		sourcePrinter.println(invokeMethod
-				.replace("<midfix>", interfacing.name() + "::")
-				.replace("<prefix>", "") + " {");
+				.replace("<midfix>", interfacing.name() + "::") + " {");
 		sourcePrinter.println();
 		
 		sourcePrinter.push();
