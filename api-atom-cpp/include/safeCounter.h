@@ -12,16 +12,16 @@
 #pragma once
 #include "platform.h"
 #include "semaphore.h"
+#include <memory>
 
 namespace api {
 
 class SafeCounter {
 	int activities;
-	Semaphore *mutex, *safe;
+	std::auto_ptr<Semaphore> mutex;
+	std::auto_ptr<Semaphore> safe;
 public:
 	SafeCounter(Platform& platform);
-
-	~SafeCounter();
 
 	void begin();
 

@@ -11,11 +11,6 @@ SafeCounter::SafeCounter(Platform& platform):
 	safe -> verhogen();
 }
 
-SafeCounter::~SafeCounter() {
-	delete mutex;
-	delete safe;
-}
-
 void SafeCounter::begin() {
 	mutex -> proberen();
 	if(activities == 0)
