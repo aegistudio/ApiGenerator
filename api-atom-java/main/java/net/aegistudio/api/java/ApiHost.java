@@ -14,8 +14,13 @@ import net.aegistudio.api.java.packet.PacketException;
 import net.aegistudio.api.java.packet.PacketReturn;
 
 public abstract class ApiHost extends ApiLocal {
+	/** Storage for weak objects. **/
 	protected final Map<Integer, ApiObject> registries = new WeakHashMap<>();
 	protected final Map<ApiObject, Integer> reverseRegistries = new WeakHashMap<>();
+	
+	/** Storage for transactions. **/
+	protected final Map<Integer, ApiObject> transaction = new HashMap<>();
+	protected final Map<ApiObject, Integer> reverseTransaction = new HashMap<>();
 	
 	protected final Connection connection;
 	public ApiHost(Connection.Factory factory) {
@@ -99,35 +104,76 @@ public abstract class ApiHost extends ApiLocal {
 		e.printStackTrace();
 	}
 	
+	private interface ThenOperation {
+		public int then(ApiObject object, Map<Integer, ApiObject> forward, Map<ApiObject, Integer> backward);
+	}
+	
+	private int discriminant(ApiObject apiObject, ThenOperation then) {
+		Map<Integer, ApiObject> forward;
+		Map<ApiObject, Integer> backward;
+		if(apiObject instanceof Transaction) {
+			forward = this.transaction;
+			backward = this.reverseTransaction;
+		}
+		else {
+			forward = this.registries;
+			backward = this.reverseRegistries;
+		}
+		return then.then(apiObject, forward, backward);
+	}
+	
 	public synchronized int marshal(ApiObject apiObject) {
-		Integer code = reverseRegistries.get(apiObject); 
+		return discriminant(apiObject, this::thenMarshal);
+	}
+	
+	private synchronized int thenMarshal(ApiObject apiObject,
+			Map<Integer, ApiObject> forward, Map<ApiObject, Integer> backward) {
+		
+		Integer code = backward.get(apiObject); 
 		if(code != null) return code;
 		
-		synchronized(this.registries) {
+		synchronized(forward) {
 			code = apiObject.hashCode();
-			while(registries.get(code) != null) code ++;
+			while(forward.get(code) != null) code ++;
 			
-			registries.put(code, apiObject);
-			reverseRegistries.put(apiObject, code);
+			forward.put(code, apiObject);
+			backward.put(apiObject, code);
 			apiObject.register(this);
 		}
 		return code;
 	}
 
-	public ApiObject retrive(int objectId) throws ApiException {
-		ApiObject result = registries.get(objectId);
-		if(result == null) throw new ApiException(
-				"Object " + objectId + " not exists.");
+	public synchronized ApiObject retrive(int objectId) throws ApiException {
+		ApiObject result;
+		synchronized(this.transaction) {
+			result = transaction.get(objectId);
+		}
+		
+		if(result == null) synchronized(this.registries) {
+			result = registries.get(objectId);
+		}
+		
+		if(result == null) 
+			throw new ApiException(
+					"Object " + objectId + " not exists.");
+
 		return result;
 	}
-
-	public synchronized void demarshal(ApiObject apiObject) {
-		if(!reverseRegistries.containsKey(apiObject)) return;
-		synchronized(this.registries) {
-			int objectId = reverseRegistries.get(apiObject);
-			reverseRegistries.remove(apiObject);
-			registries.remove(objectId);
+	
+	private synchronized int thenDemarshal(ApiObject apiObject, 
+			Map<Integer, ApiObject> forward, Map<ApiObject, Integer> backward) {
+		if(backward.containsKey(apiObject)) {
+			synchronized(forward) {
+				int objectId = backward.remove(apiObject);
+				forward.remove(objectId);
+			}
 		}
+		return 0;
+	}
+	
+	public synchronized void demarshal(ApiObject apiObject) {
+		if(apiObject == null) return;
+		discriminant(apiObject, this::thenDemarshal);
 	}
 	
 	public interface RequesterBlock {
