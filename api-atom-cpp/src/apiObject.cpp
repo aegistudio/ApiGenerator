@@ -9,8 +9,8 @@ ApiObject::ApiObject():
 ApiObject::~ApiObject() {
 	valid = false;
 	std::set<ApiHost*>::iterator iter;
-	for(iter = hosts.begin(); iter != hosts.end(); iter ++)
-		(*iter) -> demarshal(this);
+	for(iter = hosts.begin(); iter != hosts.end(); ++ iter)
+		if(*iter) (*iter) -> demarshal(this);
 }
 
 void ApiObject::remember(ApiHost* host) {

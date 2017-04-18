@@ -99,16 +99,18 @@ public abstract class ApiHost extends ApiLocal {
 		e.printStackTrace();
 	}
 	
-	public int marshal(ApiObject apiObject) {
+	public synchronized int marshal(ApiObject apiObject) {
 		Integer code = reverseRegistries.get(apiObject); 
 		if(code != null) return code;
 		
-		code = apiObject.hashCode();
-		while(registries.get(code) != null) code ++;
-		
-		registries.put(code, apiObject);
-		reverseRegistries.put(apiObject, code);
-		apiObject.register(this);
+		synchronized(this.registries) {
+			code = apiObject.hashCode();
+			while(registries.get(code) != null) code ++;
+			
+			registries.put(code, apiObject);
+			reverseRegistries.put(apiObject, code);
+			apiObject.register(this);
+		}
 		return code;
 	}
 
@@ -119,11 +121,13 @@ public abstract class ApiHost extends ApiLocal {
 		return result;
 	}
 
-	public void demarshal(ApiObject apiObject) {
+	public synchronized void demarshal(ApiObject apiObject) {
 		if(!reverseRegistries.containsKey(apiObject)) return;
-		int objectId = reverseRegistries.get(apiObject);
-		reverseRegistries.remove(apiObject);
-		registries.remove(objectId);
+		synchronized(this.registries) {
+			int objectId = reverseRegistries.get(apiObject);
+			reverseRegistries.remove(apiObject);
+			registries.remove(objectId);
+		}
 	}
 	
 	public interface RequesterBlock {

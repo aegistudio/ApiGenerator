@@ -17,6 +17,7 @@
 #include "apiLocal.h"
 #include "platform.h"
 #include "connection.h"
+#include "semaphore.h"
 #include <apiVariant>
 
 #include <exceptional>
@@ -28,6 +29,7 @@ class ApiObject;
 class ApiHost : public ApiLocal, PacketHandler {
 	std::map<int32_t, ApiObject*> objects;
 	std::map<ApiObject*, int32_t> ids;
+	Semaphore* registryMutex;
 protected:
 	Platform& platform;
 	Connection* connection;

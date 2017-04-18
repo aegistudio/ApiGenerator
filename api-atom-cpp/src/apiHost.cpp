@@ -19,9 +19,10 @@
 using namespace api;
 
 ApiHost::ApiHost(ConnectionFactory& _factory, Platform& _platform):
-	platform(_platform) {
+	platform(_platform), registryMutex(_platform.newSemaphore()) {
 
 	connection = _factory.newConnection((*this));
+	registryMutex -> verhogen();
 }
 
 ApiHost::~ApiHost() {
@@ -42,8 +43,10 @@ void ApiHost::close() {
 
 // ------ Marshal & Demarshal Management -------------
 int32_t ApiHost::marshal(ApiObject* apiObject) {
+	if(apiObject == NULL) return 0;
 	if(ids.count(apiObject)) return ids[apiObject];
 	
+	registryMutex -> proberen();
 	int32_t pointerValue = reinterpret_cast<int32_t>(apiObject);
 	while(objects.count(pointerValue) > 0)
 		pointerValue ++;
@@ -51,15 +54,19 @@ int32_t ApiHost::marshal(ApiObject* apiObject) {
 	objects[pointerValue] = apiObject;
 	ids[apiObject] = pointerValue;
 	apiObject -> remember(this);
+	registryMutex -> verhogen();
 	return pointerValue;
 }
 
 void ApiHost::demarshal(ApiObject* apiObject) {
+	if(apiObject == NULL) return;
 	if(ids.count(apiObject)) {
+		registryMutex -> proberen();
 		int32_t pointerValue = ids[apiObject];
 		objects.erase(pointerValue);
 		ids.erase(apiObject);
 		apiObject -> forget(this);
+		registryMutex -> verhogen();
 	}
 }
 
