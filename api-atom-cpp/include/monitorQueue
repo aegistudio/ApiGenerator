@@ -22,10 +22,11 @@ class MonitorQueue {
 	std::auto_ptr<Semaphore> semaphore;
 	std::auto_ptr<Semaphore> mutex;
 	std::queue<T> monitoredQueue;
+	T nil;	// Will return when closed.
 public:
-	MonitorQueue(Platform& platform):
+	MonitorQueue(Platform& platform, T nilValue):
 		semaphore(platform.newSemaphore()), 
-		mutex(platform.newSemaphore()) {
+		mutex(platform.newSemaphore()), nil(nilValue) {
 
 		mutex -> verhogen();
 	}
@@ -39,8 +40,11 @@ public:
 		semaphore -> proberen();
 
 		mutex -> proberen();
-		T value = monitoredQueue.front(); 
-		monitoredQueue.pop();
+		T value = nil;
+		if(!(monitoredQueue.empty())) {
+			value = monitoredQueue.front(); 
+			monitoredQueue.pop();
+		}
 		mutex -> verhogen();
 
 		return value;
@@ -51,6 +55,10 @@ public:
 		monitoredQueue.push(value);
 		mutex -> verhogen();
 
+		semaphore -> verhogen();
+	}
+
+	virtual void close() {
 		semaphore -> verhogen();
 	}
 };

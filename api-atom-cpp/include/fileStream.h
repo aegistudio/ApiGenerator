@@ -30,6 +30,8 @@ public:
 	virtual ~FileOutputStream() {}
 
 	virtual void write(const void*, int);
+
+	virtual void flush();
 };
 
 };

@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import net.aegistudio.api.Document;
 import net.aegistudio.api.Namespace;
+import net.aegistudio.api.Primitive;
 import net.aegistudio.api.Type;
 import net.aegistudio.api.Value;
 import net.aegistudio.api.Value.Field;
@@ -118,8 +119,10 @@ public class CppValueGenerator extends CppPerspectGenerator<Value> {
 			if(typeList[i].variant())
 				initializeTable.append("0");
 			
-			// If it is primitive, set the initial length to zero.
-			else if(resultList[i].primitive != null)
+			// If it is primitive, set the initial value to 0.
+			// But do not set the string to 0, this would break the program!
+			else if(resultList[i].primitive != null 
+					&& !(resultList[i].primitive.equals(Primitive.STRING)))
 				initializeTable.append("0");
 			
 			// If it is client side, set the callback pointer to NULL.

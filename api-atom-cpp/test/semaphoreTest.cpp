@@ -7,7 +7,7 @@ const int maxValue = 20;
 
 void test() throw (int) {
 	api::Platform& platform = getPlatform();
-	api::MonitorQueue<int> monitorQueue(platform);
+	api::MonitorQueue<int> monitorQueue(platform, 0);
 
 	class ProducerThread : public api::Runnable {
 		int counter;

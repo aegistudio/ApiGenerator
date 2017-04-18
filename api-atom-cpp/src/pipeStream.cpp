@@ -2,7 +2,7 @@
 
 using namespace api;
 
-Pipe::Pipe(Platform& platform): pipe(platform), 
+Pipe::Pipe(Platform& platform): pipe(platform, 0), 
 	input(pipe), output(pipe) {}
 
 PipeInputStream::PipeInputStream(MonitorQueue<int8_t>& _pipe):

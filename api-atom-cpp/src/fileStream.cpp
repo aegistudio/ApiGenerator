@@ -34,3 +34,7 @@ FileOutputStream::FileOutputStream(FILE* _file):
 void FileOutputStream::write(const void* buffer, int size) {
 	fwrite(buffer, size, 1, file);
 }
+
+void FileOutputStream::flush() {
+	fflush(file);
+}

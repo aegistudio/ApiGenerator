@@ -24,3 +24,7 @@ void OutputStream::write##name(type param) {\
 
 FLT_METHOD(Float, float)
 FLT_METHOD(Double, double)
+
+void OutputStream::flush() {
+	// Do nothing!
+}

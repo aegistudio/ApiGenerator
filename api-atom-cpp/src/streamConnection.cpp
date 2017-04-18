@@ -1,5 +1,6 @@
 #include "streamConnection.h"
 
+#include "safeCounter.h"
 #include <readerThread>
 #include <writerThread>
 #include <monitorQueue>
@@ -55,6 +56,7 @@ class StreamConnection : public Connection {
 	PacketHandler& packetHandle;
 	Platform& platform;
 	Protocol<Packet>& protocol;
+	SafeCounter safeCounter;
 
 	// Reader scope.
 	StreamReaderHandler readHandler;
@@ -85,15 +87,15 @@ StreamConnection::StreamConnection(
 	InputStream& _i, OutputStream& _o, PacketHandler& _p, 
 	Platform& _pt, Protocol<Packet>& _ptcl):
 	inputStream(_i), outputStream(_o), packetHandle(_p), 
-	platform(_pt), protocol(_ptcl),
+	platform(_pt), protocol(_ptcl), safeCounter(_pt),
 
 	// Reader handler.
 	readHandler(packetHandle), 
-	readerThread(_pt, _i, _ptcl, readHandler),
+	readerThread(_pt, _i, _ptcl, readHandler, safeCounter),
 	readerThreadHandle(_pt.newThread(&readerThread)),
 	
 	// Writer handler.
-	writeHandler(packetHandle), monitorQueue(_pt),
+	writeHandler(packetHandle), monitorQueue(_pt, NULL),
 	writerThread(_ptcl, _o, writeHandler, monitorQueue),
 	writerThreadHandle(_pt.newThread(&writerThread)) {
 }
@@ -105,7 +107,9 @@ void StreamConnection::start() {
 
 void StreamConnection::close() {
 	readerThreadHandle -> kill();
-	writerThreadHandle -> kill();
+	safeCounter.wait();
+	monitorQueue.close();
+	writerThreadHandle -> join();
 }
 
 void StreamConnection::send(Packet* packet) {

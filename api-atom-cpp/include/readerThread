@@ -12,6 +12,7 @@
 #include "protocol.h"
 #include "apiException.h"
 #include "stream.h"
+#include "safeCounter.h"
 
 #include <memory>
 
@@ -29,14 +30,17 @@ template <typename T>
 class AsyncReadHandler : public Runnable {
 	ReaderHandler<T>& handler;
 	std::auto_ptr<T> data;
+	SafeCounter& safeCounter;
 public:
-	AsyncReadHandler(ReaderHandler<T>& _handler, T* _data):
-		handler(_handler), data(_data) {}
+	AsyncReadHandler(ReaderHandler<T>& _handler, T* _data, SafeCounter& _safe):
+		handler(_handler), data(_data), safeCounter(_safe) {}
 
 	virtual ~AsyncReadHandler() {}
 
 	virtual void run() {
+		safeCounter.begin();
 		handler.handleData(data.get());
+		safeCounter.end();
 	}
 };
 
@@ -46,12 +50,15 @@ class ReaderThread : public Runnable {
 	Platform& platform;
 	InputStream& inputStream;
 	ReaderHandler<T>& handler;
+	SafeCounter& safeCounter;
 public:
 
 	ReaderThread(Platform& _platform, InputStream& _inputStream, 
-		Protocol<T>& _protocol, ReaderHandler<T>& _handler):
+		Protocol<T>& _protocol, ReaderHandler<T>& _handler,
+		SafeCounter& _safeCounter):
 		platform(_platform), inputStream(_inputStream),
-		protocol(_protocol), handler(_handler) {}
+		protocol(_protocol), handler(_handler), 
+		safeCounter(_safeCounter) {}
 
 	virtual void run() {
 		// To stop it, you could only use api::Thread::kill()
@@ -61,8 +68,8 @@ public:
 				handler.handleError(someMonad.exception);
 			else {
 				T* something = someMonad.value;
-				platform.newThread(
-					new AsyncReadHandler<T>(handler, something), true) -> detach();
+				platform.newThread(new AsyncReadHandler<T>(
+					handler, something, safeCounter), true) -> detach();
 			}
 		}
 	}

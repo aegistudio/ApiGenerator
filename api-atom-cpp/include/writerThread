@@ -27,10 +27,14 @@ public:
 		// Can only be terminated by api::Thread::kill().
 		while(1) {
 			T* data = monitorQueue.remove();
-			if(data == NULL) continue;
+
+			// Please set nil of queue to NULL.
+			if(data == NULL) return;	
 
 			_EX(void*) transferMonad = 
-				protocol.transfer(data, outputStream);	
+				protocol.transfer(data, outputStream);
+			outputStream.flush();
+
 			if(transferMonad.abnormal) 
 				writerHandler.handleError(data, transferMonad.exception);
 			delete data;

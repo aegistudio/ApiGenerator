@@ -51,6 +51,8 @@ public:
 	void	writeFloat(float);
 
 	void	writeDouble(double);
+
+	virtual void flush();
 };
 
 };
