@@ -6,6 +6,7 @@ import java.util.Map;
 import net.aegistudio.api.Document;
 import net.aegistudio.api.gen.CommonFactory;
 import net.aegistudio.api.gen.Context;
+import net.aegistudio.api.gen.FlavourDocument;
 import net.aegistudio.api.gen.Generator;
 
 public class JavaGeneratorFactory extends CommonFactory {
@@ -43,10 +44,11 @@ public class JavaGeneratorFactory extends CommonFactory {
 			@Override
 			public void generate(Context context, Document dom) throws IOException {
 				Context sourceDirectory = context.step(source);
+				FlavourDocument fdom = new FlavourDocument(flavourText, dom);
 	
-				javaValue.generate(sourceDirectory, dom);
-				interfaceGenerator.generate(sourceDirectory, dom);
-				callbackGenerator.generate(sourceDirectory, dom);
+				javaValue.generate(sourceDirectory, fdom);
+				interfaceGenerator.generate(sourceDirectory, fdom);
+				callbackGenerator.generate(sourceDirectory, fdom);
 				if(generatePom) pomGenerator.generate(context, dom);
 			}
 		};

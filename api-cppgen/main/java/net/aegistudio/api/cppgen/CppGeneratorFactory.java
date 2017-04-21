@@ -6,6 +6,7 @@ import java.util.Map;
 import net.aegistudio.api.Document;
 import net.aegistudio.api.gen.CommonFactory;
 import net.aegistudio.api.gen.Context;
+import net.aegistudio.api.gen.FlavourDocument;
 import net.aegistudio.api.gen.Generator;
 
 public class CppGeneratorFactory extends CommonFactory {
@@ -48,9 +49,11 @@ public class CppGeneratorFactory extends CommonFactory {
 		return new Generator() {
 			@Override
 			public void generate(Context context, Document dom) throws IOException {
-				cppValue.generate(context, dom);
-				interfaceGenerator.generate(context, dom);
-				callbackGenerator.generate(context, dom);
+				FlavourDocument fdom = new FlavourDocument(flavourText, dom);
+				
+				cppValue.generate(context, fdom);
+				interfaceGenerator.generate(context, fdom);
+				callbackGenerator.generate(context, fdom);
 				if(makeGenerator != null) 
 					makeGenerator.generate(context, dom);
 			}
