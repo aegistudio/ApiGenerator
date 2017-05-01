@@ -13,14 +13,13 @@
 #pragma once
 #include <stdint.h>
 
-typedef int8_t byte;
 namespace api {
 
 class Endian {
 public:
-	virtual void network(byte*, int) = 0;
+	virtual void network(int8_t*, int) = 0;
 
-	virtual void host(byte*, int) = 0;
+	virtual void host(int8_t*, int) = 0;
 
 	static Endian& integer();
 

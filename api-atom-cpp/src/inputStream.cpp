@@ -12,7 +12,7 @@ int8_t InputStream::readByte() {
 type InputStream::read##name() {\
 	type result;\
 	read(&result, sizeof(type));\
-	api::Endian::integer().host((byte*)&result, sizeof(type));\
+	api::Endian::integer().host((int8_t*)&result, sizeof(type));\
 	return result;\
 }
 
@@ -20,7 +20,7 @@ type InputStream::read##name() {\
 type InputStream::read##name() {\
 	type result;\
 	read(&result, sizeof(type));\
-	api::Endian::floating().host((byte*)&result, sizeof(type));\
+	api::Endian::floating().host((int8_t*)&result, sizeof(type));\
 	return result;\
 }
 

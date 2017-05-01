@@ -8,7 +8,7 @@ void OutputStream::writeByte(int8_t param) {
 
 #define INT_METHOD(name, type)\
 void OutputStream::write##name(type param) {\
-	api::Endian::integer().network((byte*)&param, sizeof(type));\
+	api::Endian::integer().network((int8_t*)&param, sizeof(type));\
 	write(&param, sizeof(type));\
 }
 
@@ -18,7 +18,7 @@ INT_METHOD(Long, int64_t)
 
 #define FLT_METHOD(name, type)\
 void OutputStream::write##name(type param) {\
-	api::Endian::floating().network((byte*)&param, sizeof(type));\
+	api::Endian::floating().network((int8_t*)&param, sizeof(type));\
 	write(&param, sizeof(type));\
 }
 

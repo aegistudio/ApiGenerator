@@ -5,33 +5,33 @@ using namespace api;
 
 class BigEndian : public Endian {
 public:
-	virtual void host(byte*, int) {}
+	virtual void host(int8_t*, int) {}
 
-	virtual void network(byte*, int) {}
+	virtual void network(int8_t*, int) {}
 } bigEndian;
 
 class LittleEndian : public Endian {
-	virtual void host(byte*, int);
+	virtual void host(int8_t*, int);
 
-	virtual void network(byte*, int);
+	virtual void network(int8_t*, int);
 } littleEndian;
 
-void swap(byte* buffer, int size) {
+void swap(int8_t* buffer, int size) {
 	int left = 0, right = size - 1;
 
 	while(left < right) {
-		byte current = buffer[left];
+		int8_t current = buffer[left];
 		buffer[left] = buffer[right];
 		buffer[right] = current;
 		left ++; right --;
 	}
 }
 
-void LittleEndian::host(byte* network, int size) {
+void LittleEndian::host(int8_t* network, int size) {
 	swap(network, size);
 }
 
-void LittleEndian::network(byte* host, int size) {
+void LittleEndian::network(int8_t* host, int size) {
 	swap(host, size);
 }
 
