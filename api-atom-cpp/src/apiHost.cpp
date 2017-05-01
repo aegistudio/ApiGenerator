@@ -8,6 +8,7 @@
 
 #include "bufferStream.h"
 
+#include <iostream>
 #include <sstream>
 
 #define TRY_SERVEREX(T, id, expression)\
@@ -44,38 +45,53 @@ void ApiHost::close() {
 // ------ Marshal & Demarshal Management -------------
 int32_t ApiHost::marshal(ApiObject* apiObject) {
 	if(apiObject == NULL) return 0;
-	if(ids.count(apiObject)) return ids[apiObject];
-	
 	registryMutex -> proberen();
-	int32_t pointerValue = reinterpret_cast<int32_t>(apiObject);
-	while(objects.count(pointerValue) > 0)
-		pointerValue ++;
-	
-	objects[pointerValue] = apiObject;
-	ids[apiObject] = pointerValue;
-	apiObject -> remember(this);
+	int32_t result;
+
+	if(ids.count(apiObject) > 0) 
+		result = ids[apiObject];
+	else {
+		int32_t pointerValue = (int32_t)apiObject;
+		while(objects.count(pointerValue) > 0)
+			pointerValue ++;
+
+		result = pointerValue;	
+		objects[pointerValue] = apiObject;
+		ids[apiObject] = pointerValue;
+		apiObject -> remember(this);
+	}
 	registryMutex -> verhogen();
-	return pointerValue;
+
+	return result;
 }
 
 void ApiHost::demarshal(ApiObject* apiObject) {
 	if(apiObject == NULL) return;
+
+	registryMutex -> proberen();
 	if(ids.count(apiObject)) {
-		registryMutex -> proberen();
 		int32_t pointerValue = ids[apiObject];
 		objects.erase(pointerValue);
 		ids.erase(apiObject);
 		apiObject -> forget(this);
-		registryMutex -> verhogen();
+
 	}
+	registryMutex -> verhogen();
 }
 
 _EX(ApiObject*) ApiHost::search(int32_t value) {
 	if(value == 0) return this;
-	if(objects.count(value)) return objects[value];
+
+	registryMutex -> proberen();
+	ApiObject* result = NULL;
+	if(objects.count(value)) 
+		result = objects[value];
+	registryMutex -> verhogen();
+
+	if(result != NULL) return result;
 	else {
 		std::stringstream messageBuilder;
-		messageBuilder << "Api Object #" << value + " does not exist.";
+		messageBuilder << "Api Object #" << value << " does not exist.";
 		throwException(messageBuilder.str());
 	}
 }
@@ -214,7 +230,6 @@ void ApiHost::handleException(Packet* packet) {
 	}
 }
 
-#include <iostream>
 void ApiHost::serverExcept(ApiException e) {
 	std::cerr << e.message() << std::endl;
 }

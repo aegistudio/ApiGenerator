@@ -83,7 +83,7 @@ public class CppRemoteGenerator extends CppPerspectGenerator<Interfacing> {
 		String readMethod = "_EX(" + interfacing.name() 
 			+ ") <midfix>read(api::ApiHost& _host, \n" 
 			+ "\t\tapi::InputStream& _inputStream)";
-		String writeMethod = "void <midfix>write(" + interfacing.name() 
+		String writeMethod = "_EX(void*) <midfix>write(" + interfacing.name() 
 			+ "& _object, api::ApiHost& _host, \n"
 			+ "\t\tapi::OutputStream& _outputStream)";
 		
@@ -140,6 +140,7 @@ public class CppRemoteGenerator extends CppPerspectGenerator<Interfacing> {
 			sourcePrinter.println("// Implement the write method.");
 			sourcePrinter.println(writeMethod.replace("<midfix>", interfacing.name() + "::") + "{");
 			sourcePrinter.println("\t_object.api::ApiRemote::write(_host, _outputStream);");
+			sourcePrinter.println("return NULL;");
 			sourcePrinter.println("}");
 			sourcePrinter.println();
 		}

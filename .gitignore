@@ -5,3 +5,4 @@ target
 .classpath
 .wtpmodule
 vst.xml
+*.swp

@@ -46,7 +46,7 @@ public class CppValueGenerator extends CppPerspectGenerator<Value> {
 		String readMethod = "_EX(" + perspect.name() 
 			+ ") <midfix>read(api::ApiHost& _host, \n" 
 			+ "\t\tapi::InputStream& _inputStream)";
-		String writeMethod = "void <midfix>write(" + perspect.name() 
+		String writeMethod = "_EX(void*) <midfix>write(" + perspect.name() 
 			+ "& _object, api::ApiHost& _host, \n"
 			+ "\t\tapi::OutputStream& _outputStream)";
 		
@@ -170,6 +170,7 @@ public class CppValueGenerator extends CppPerspectGenerator<Value> {
 		super.ioMethod(symbolTable, namespace, writeSerializer, "_outputStream", 
 				"_host", sourcePrinter, typeList, writeObjectList);
 		
+		sourcePrinter.println("return NULL;");
 		sourcePrinter.pop();
 		sourcePrinter.println("}");
 		

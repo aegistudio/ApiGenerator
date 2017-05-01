@@ -161,6 +161,7 @@ public class CppLocalGenerator extends CppPerspectGenerator<Interfacing> {
 			sourcePrinter.pop();
 			sourcePrinter.println("}");
 			
+			sourcePrinter.println("return NULL;");
 			sourcePrinter.pop();
 			sourcePrinter.println("}");
 			sourcePrinter.println();
