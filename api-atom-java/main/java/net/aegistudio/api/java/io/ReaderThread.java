@@ -45,6 +45,7 @@ public class ReaderThread<T> extends Thread {
 	public void close() {
 		try {
 			open = false;
+			this.interrupt();
 			this.stop();
 			this.in.close();
 		}

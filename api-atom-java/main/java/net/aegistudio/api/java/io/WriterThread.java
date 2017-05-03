@@ -48,6 +48,7 @@ public class WriterThread<T> extends Thread {
 	public void close() {
 		try {
 			open = false;
+			this.interrupt();
 			this.stop();
 			this.out.close();
 		}
