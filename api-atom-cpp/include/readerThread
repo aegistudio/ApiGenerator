@@ -46,8 +46,8 @@ public:
 
 template <typename T>
 class ReaderThread : public Runnable {
-	Protocol<T>& protocol;
 	Platform& platform;
+	Protocol<T>& protocol;
 	InputStream& inputStream;
 	ReaderHandler<T>& handler;
 	SafeCounter& safeCounter;
@@ -56,8 +56,8 @@ public:
 	ReaderThread(Platform& _platform, InputStream& _inputStream, 
 		Protocol<T>& _protocol, ReaderHandler<T>& _handler,
 		SafeCounter& _safeCounter):
-		platform(_platform), inputStream(_inputStream),
-		protocol(_protocol), handler(_handler), 
+		platform(_platform), protocol(_protocol), 
+		inputStream(_inputStream), handler(_handler), 
 		safeCounter(_safeCounter) {}
 
 	virtual void run() {

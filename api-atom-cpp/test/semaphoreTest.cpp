@@ -10,8 +10,8 @@ void test() throw (int) {
 	api::MonitorQueue<int> monitorQueue(platform, 0);
 
 	class ProducerThread : public api::Runnable {
-		int counter;
 		api::MonitorQueue<int>& queue;
+		int counter;
 	public:
 		ProducerThread(api::MonitorQueue<int>& _queue):
 			queue(_queue), counter(0) {}

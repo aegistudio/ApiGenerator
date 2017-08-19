@@ -95,7 +95,7 @@ StreamConnection::StreamConnection(
 	readerThreadHandle(_pt.newThread(&readerThread)),
 	
 	// Writer handler.
-	writeHandler(packetHandle), monitorQueue(_pt, NULL),
+	monitorQueue(_pt, NULL), writeHandler(packetHandle), 
 	writerThread(_ptcl, _o, writeHandler, monitorQueue),
 	writerThreadHandle(_pt.newThread(&writerThread)) {
 }

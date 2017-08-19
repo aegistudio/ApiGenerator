@@ -33,9 +33,9 @@ namespace api {
 template<typename T>
 class exceptional {
 public:
-	const bool abnormal;
 	const ApiException exception;
 	const T value;
+	const bool abnormal;
 
 	exceptional(T data): 
 		value(data),

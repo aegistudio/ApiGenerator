@@ -4,7 +4,7 @@
 using namespace api;
 
 BufferInputStream::BufferInputStream(int _frameSize, int8_t* _buffer):
-	frameSize(_frameSize), buffer(_buffer), pointer(0)	
+	frameSize(_frameSize), pointer(0), buffer(_buffer) 
 	{	}
 
 void BufferInputStream::read(void* _buffer, int size) {

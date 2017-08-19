@@ -20,7 +20,7 @@
 using namespace api;
 
 ApiHost::ApiHost(ConnectionFactory& _factory, Platform& _platform):
-	platform(_platform), registryMutex(_platform.newSemaphore()) {
+	registryMutex(_platform.newSemaphore()), platform(_platform) {
 
 	connection = _factory.newConnection((*this));
 	registryMutex -> verhogen();

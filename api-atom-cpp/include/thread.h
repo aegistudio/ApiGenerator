@@ -20,8 +20,8 @@ public:
 
 class Thread {
 protected:
-	bool ownRunnable;
 	Runnable* runnable;
+	bool ownRunnable;
 public:
 	Thread(Runnable* _runnable, bool _ownRunnable):
 		runnable(_runnable), ownRunnable(_ownRunnable) {}

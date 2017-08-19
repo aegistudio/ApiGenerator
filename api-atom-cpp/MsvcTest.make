@@ -21,7 +21,7 @@
 # instead.
 COMPILER = mscl
 LINKER = mslink
-CXXFLAGS = /GX
+CXXFLAGS = /GX /O3 /Wall
 
 TEST = test
 INCLUDE = include

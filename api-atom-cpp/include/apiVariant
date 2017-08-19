@@ -45,8 +45,8 @@ public:
 	}
 
 	variant(int size):
-		_length(size), data(
-			size > 0? new T[size] : NULL) {}
+		data(size > 0? new T[size] : NULL),
+		_length(size) {}
 
 	// @@@ Memory Leak Warning @@@
 	// Invocation to this method will transfer
@@ -54,8 +54,7 @@ public:
 	// and may cause double free if manage it
 	// else where.
 	variant(int size, T* theData):
-		_length(size), data(theData)
-		{}
+		data(theData), _length(size) {}
 
 	variant(const variant<T>& copy) {
 		copyFrom(copy);

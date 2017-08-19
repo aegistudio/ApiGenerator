@@ -22,7 +22,7 @@
 COMPILER = mscl
 LINKER = mslink
 LIBTOOL = mslib
-CXXFLAGS = /GX /Op
+CXXFLAGS = /GX /O3 /Wall
 
 SOURCE = src
 INCLUDE = include
