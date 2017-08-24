@@ -18,8 +18,8 @@ namespace api {
 
 class SafeCounter {
 	int activities;
-	std::auto_ptr<Semaphore> mutex;
-	std::auto_ptr<Semaphore> safe;
+	std::unique_ptr<Semaphore> mutex;
+	std::unique_ptr<Semaphore> safe;
 public:
 	SafeCounter(Platform& platform);
 

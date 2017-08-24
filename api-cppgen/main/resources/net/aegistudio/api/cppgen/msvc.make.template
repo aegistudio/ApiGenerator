@@ -1,6 +1,7 @@
 COMPILER = ${tool.compiler}
 LINKER = ${tool.linker}
 LIBTOOL = ${tool.libtool}
+CXXFLAGS = /O3 /Wall
 
 TARGET = ${api.sources}
 APIHOME = ${api.home}

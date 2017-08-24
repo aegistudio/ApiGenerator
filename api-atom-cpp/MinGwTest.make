@@ -15,9 +15,12 @@
 # while building APIs for linux under linux or windows
 # under windows, never use this one.
 
+# The flag -Wno-deprecated flag is add to suppress the warning:
+# dynamic exception specifications are deprecated in C++11.
+
 COMPILER = mingw32-g++
 LINKER = mingw32-ld
-CXXFLAGS = -O3 -Wall
+CXXFLAGS = -O3 -Wall -Wno-deprecated
 LDFLAGS = -lgcc -lstdc++ -lntdll -lmingw32 -lkernel32 -lmingwex
 
 TEST = test

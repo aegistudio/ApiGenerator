@@ -19,8 +19,8 @@ namespace api {
 
 template<typename T>
 class MonitorQueue {
-	std::auto_ptr<Semaphore> semaphore;
-	std::auto_ptr<Semaphore> mutex;
+	std::unique_ptr<Semaphore> semaphore;
+	std::unique_ptr<Semaphore> mutex;
 	std::queue<T> monitoredQueue;
 	T nil;	// Will return when closed.
 public:

@@ -61,13 +61,13 @@ class StreamConnection : public Connection {
 	// Reader scope.
 	StreamReaderHandler readHandler;
 	ReaderThread<Packet> readerThread;
-	std::auto_ptr<Thread> readerThreadHandle;
+	std::unique_ptr<Thread> readerThreadHandle;
 
 	// Writer scope.
 	MonitorQueue<Packet*> monitorQueue;
 	StreamWriteHandler writeHandler;
 	WriterThread<Packet> writerThread;
-	std::auto_ptr<Thread> writerThreadHandle;
+	std::unique_ptr<Thread> writerThreadHandle;
 
 public:
 	StreamConnection(InputStream&, OutputStream&, 
